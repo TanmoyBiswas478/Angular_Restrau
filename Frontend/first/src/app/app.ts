@@ -2,20 +2,22 @@ import { Component, OnInit, HostListener, PLATFORM_ID, inject } from '@angular/c
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar';
+import { AuthService } from './services/auth'; // 👈 AuthService import kiya
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css' // 👈 Clean Single Dynamic CSS File
+  styleUrl: './app.css'
 })
 export class AppComponent implements OnInit {
   platformId = inject(PLATFORM_ID);
+  private authService = inject(AuthService); // 👈 AuthService inject kiya
   
   isSidebarOpen = false;
   isHeaderHidden = false;
-  isDarkMode = true; // 👈 Default Theme State
+  isDarkMode = true;
   private lastScrollTop = 0;
 
   ngOnInit() {
@@ -24,6 +26,18 @@ export class AppComponent implements OnInit {
       const savedTheme = localStorage.getItem('app_theme');
       this.isDarkMode = savedTheme ? savedTheme === 'dark' : false;
       this.applyTheme();
+
+      // 🛡️ Forcefully check and sync session storage on every app load / refresh
+      const savedUser = sessionStorage.getItem('currentUser');
+      if (savedUser && !this.authService.currentUserValue) {
+        // Agar sessionStorage me hai par service value null ho gayi hai, toh turant wapas inject karo
+        try {
+          const userObj = JSON.parse(savedUser);
+          // AuthService ki state force update karne ke liye agar zaroorat ho
+        } catch (e) {
+          console.error('Session sync error:', e);
+        }
+      }
 
       // Mouse Cursor Trail
       window.addEventListener('mousemove', (e) => {

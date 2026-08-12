@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 // Pages & Components Imports
+import { authGuard } from './auth.guard'; 
 import { HomeComponent } from './pages/home/home';
 import { LoginComponent } from './pages/login/login';
 import { RegisterComponent } from './pages/register/register';
@@ -12,36 +13,37 @@ import { EmployeesComponent } from './pages/employees/employees';
 import { MembershipComponent } from './pages/membership/membership';
 import { MyOrdersComponent } from './pages/customer/my-orders/my-orders';
 import { ProfileComponent } from './pages/customer/profile/profile';
-import { ChefDashboardComponent } from './pages/chef-dashboard/chef-dashboard/chef-dashboard'; // 👈 Added Chef Dashboard Component
+import { ChefDashboardComponent } from './pages/chef-dashboard/chef-dashboard/chef-dashboard';
+import { loginGuard } from './login.guard';
 
 // 👑 Admin Components Imports
 import { AdminLoginComponent } from './pages/admin-login/admin-login';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { 
+    path: '', 
+    redirectTo: 'home', 
+    pathMatch: 'full' 
+  },
   
-  // Public & Customer Routes
+  // Public Routes
   { path: 'home', component: HomeComponent },
-  { path: 'login', component: LoginComponent },            // Public Login
-  { path: 'register', component: RegisterComponent },        // Customer Sign Up
-  { path: 'dashboard', component: DashboardComponent },      // Portal
-  { path: 'my-orders', component: MyOrdersComponent },      // Customer Orders
-  { path: 'profile', component: ProfileComponent },
-
-  // 👨‍🍳 Chef Dedicated Route
-  { path: 'chef/dashboard', component: ChefDashboardComponent }, // 🟢 Kitchen Inventory & Stock Alerts
-
-  // 👑 Dedicated Admin Routes
+  { path: 'login', component: LoginComponent, canActivate: [loginGuard] },           
+  { path: 'register', component: RegisterComponent },        
   { path: 'admin/login', component: AdminLoginComponent },
-  { path: 'admin/dashboard', component: AdminDashboardComponent },
 
-  // Internal Management Routes
-  { path: 'inventory', component: InventoryComponent },
-  { path: 'deliveries', component: DeliveriesComponent },     // Shared Deliveries Page for Admin & Chef
-  { path: 'employees', component: EmployeesComponent },
-  { path: 'admin-settings', component: AdminSettingsComponent },
-  { path: 'membership', component: MembershipComponent },
+  // Protected Routes
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },      
+  { path: 'my-orders', component: MyOrdersComponent, canActivate: [authGuard] },      
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: 'chef/dashboard', component: ChefDashboardComponent, canActivate: [authGuard] }, 
+  { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [authGuard] },
+  { path: 'inventory', component: InventoryComponent, canActivate: [authGuard] },
+  { path: 'deliveries', component: DeliveriesComponent, canActivate: [authGuard] },     
+  { path: 'employees', component: EmployeesComponent, canActivate: [authGuard] },
+  { path: 'admin-settings', component: AdminSettingsComponent, canActivate: [authGuard] },
+  { path: 'membership', component: MembershipComponent, canActivate: [authGuard] },
 
   // Wildcard Route
   { path: '**', redirectTo: 'home' }

@@ -31,16 +31,20 @@ export class AuthService {
     'Accept': 'application/json'
   });
 
-  // Active User State (No LocalStorage dependency, starts as null)
-  private currentUserSubject = new BehaviorSubject<UserPayload | null>(null);
+  // Active User State (Synchronously loaded from sessionStorage immediately)
+  private currentUserSubject = new BehaviorSubject<UserPayload | null>(this.getUser());
   currentUser$ = this.currentUserSubject.asObservable();
+
+  // 🎯 Getter to access current value synchronously inside Guards
+  get currentUserValue(): UserPayload | null {
+    return this.currentUserSubject.value;
+  }
 
   private idleTimeout: any;
   private readonly IDLE_TIME_LIMIT = 5 * 60 * 1000; // 🌟 5 Minutes Inactivity Limit
 
   constructor() {
-    // Browser check for event listeners only
-    if (this.isBrowser()) {
+    if (this.isBrowser() && this.getUser()) {
       this.initIdleTimer();
     }
   }
@@ -49,26 +53,58 @@ export class AuthService {
     return isPlatformBrowser(this.platformId);
   }
 
+  // Helper to fetch user from SessionStorage safely
+  private getUser(): UserPayload | null {
+    if (this.isBrowser()) {
+      try {
+        const user = sessionStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      } catch (e) {
+        console.error('Error reading session storage:', e);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  // 🌟 CRITICAL FIX: Method for Auth Guard to sync state back on refresh
+  restoreSession(user: UserPayload) {
+    if (!this.currentUserSubject.value) {
+      this.currentUserSubject.next(user);
+      this.initIdleTimer();
+    }
+  }
+
   // 1. REGISTER USER VIA API
   register(userData: UserPayload): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, userData, { headers: this.ngrokHeaders });
   }
 
-  // 2. LOGIN USER VIA API
+  // 2. LOGIN USER VIA API (Stored in SessionStorage)
   login(credentials: { email: string; password?: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials, { headers: this.ngrokHeaders }).pipe(
       tap((response: any) => {
+        console.log('🔍 Full Login Response:', response);
+        
         const user = response.user || response;
-        // 🛑 No LocalStorage set here anymore
+        if (this.isBrowser()) {
+          sessionStorage.setItem('currentUser', JSON.stringify(user));
+          if (response.token) {
+            sessionStorage.setItem('authToken', response.token);
+          }
+        }
         this.currentUserSubject.next(user);
         this.initIdleTimer();
       })
     );
   }
 
-  // 3. LOGOUT USER
+  // 3. LOGOUT USER (Clears SessionStorage)
   logout() {
-    // 🛑 No LocalStorage remove needed
+    if (this.isBrowser()) {
+      sessionStorage.removeItem('currentUser');
+      sessionStorage.removeItem('authToken');
+    }
     this.currentUserSubject.next(null);
     this.clearIdleTimer();
     this.router.navigate(['/login']);
@@ -101,14 +137,6 @@ export class AuthService {
       alert('⏰ Session expired due to 5 minutes of inactivity. Please log in again.');
       this.logout();
     }
-  }
-
-  private getUser(): UserPayload | null {
-    if (this.isBrowser()) {
-      const user = localStorage.getItem('currentUser');
-      return user ? JSON.parse(user) : null;
-    }
-    return null;
   }
 
   clearIdleTimer() {

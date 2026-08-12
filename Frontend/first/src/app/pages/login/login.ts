@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,20 +8,52 @@ import { AuthService } from '../../services/auth';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
+  template: `
+    <!-- Jab tak check ho raha hai, tab tak pure page par sirf ek dark background dikhega, ek bhi form element render nahi hoga -->
+    <div *ngIf="isChecking" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #0b0f19; z-index: 99999;"></div>
+
+    <!-- Agar logged-in nahi hai, tabhi asli login form render hoga -->
+    <div *ngIf="!isChecking">
+      <!-- Tumhara purana HTML template load hoga -->
+      <ng-container *ngTemplateOutlet="loginFormTemplate"></ng-container>
+    </div>
+
+    <ng-template #loginFormTemplate>
+      <!-- Yahan tum apna original login form ka HTML code ya template file laga sakte ho -->
+    </ng-template>
+  `,
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
 
-  credentials = {
-    email: '',
-    password: ''
-  };
-
+  credentials = { email: '', password: '' };
   errorMessage = '';
   isLoading = false;
+  isChecking = true; // 🟢 Ekdum strict flag jo flash ko block karega
+
+  ngOnInit() {
+    if (this.authService.currentUserValue || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('currentUser'))) {
+      const user = this.authService.currentUserValue || JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+      const userRole = user?.role ? user.role.toLowerCase() : '';
+
+      if (userRole === 'admin') {
+        this.router.navigate(['/admin/dashboard']);
+        return;
+      } else if (userRole.includes('manager') || userRole.includes('delivery')) {
+        this.router.navigate(['/dashboard']);
+        return;
+      } else {
+        this.router.navigate(['/home']);
+        return;
+      }
+    }
+
+    // Agar user logged-in nahi hai, tabhi checking off karke form dikhao
+    this.isChecking = false;
+  }
 
   onLogin() {
     this.errorMessage = '';
@@ -41,17 +73,15 @@ export class LoginComponent {
         const user = res.user || res;
         const userRole = user?.role ? user.role.toLowerCase() : '';
 
-        // 🛑 STRICT ADMIN RESTRICTION: Admins are not allowed to log in via Customer Portal
         if (userRole === 'admin') {
-          this.authService.logout(); // Immediate Session Clear
+          this.authService.logout();
           const errorMsg = '⛔ Access Denied! Admin accounts must log in via the Super Admin Portal.';
           this.errorMessage = errorMsg;
           alert(errorMsg);
-          this.router.navigate(['/admin/login']); // Redirect to Admin Portal
+          this.router.navigate(['/admin/login']);
           return;
         }
 
-        // 🟢 Successful Customer / Staff Login
         alert(`🎉 Welcome back, ${user?.name || 'User'}! Login Successful.`);
         
         if (userRole.includes('manager') || userRole.includes('delivery')) {

@@ -49,8 +49,9 @@ export class ChefDashboardComponent implements OnInit {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        this.currentChefId = String(parsed.eid || parsed.id || parsed.employee_id || 'EID1');
-        this.currentChefName = String(parsed.name || parsed.full_name || parsed.username || 'Chef User');
+        this.currentChefId = String(parsed.eid || parsed.id || parsed.customer_id || parsed.employee_id || 'EID1');
+        // Saari possible name keys check kar rahe hain
+        this.currentChefName = String(parsed.name || parsed.customer_name || parsed.full_name || parsed.username || parsed.email || 'Chef User');
       } catch (e) {
         console.error('Error reading chef credentials:', e);
       }
