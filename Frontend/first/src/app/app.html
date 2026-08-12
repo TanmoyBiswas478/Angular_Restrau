@@ -1,0 +1,13 @@
+<!-- Navbar component ko scroll hide/show wrapper ke andar rakha hai -->
+<div class="nav-wrapper" [class.header-hidden]="isHeaderHidden">
+  <app-navbar (sidebarToggled)="isSidebarOpen = $event"></app-navbar>
+</div>
+
+<!-- Main content container jo signal ke hisaab se shift hoga -->
+<div class="main-content" [class.shifted]="isSidebarOpen">
+  
+  <!-- Aapke baaki pages (home, login, etc.) yahan load honge -->
+  <router-outlet></router-outlet>
+  
+</div>
+

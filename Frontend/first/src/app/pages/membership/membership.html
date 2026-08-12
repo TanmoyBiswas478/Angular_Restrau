@@ -1,0 +1,76 @@
+<div class="membership-layout">
+  <section class="membership-hero">
+    <div class="badge-elite">✦ YUMMMY ELITE MEMBERSHIP</div>
+    <h1>Choose Your <span class="text-gradient">Culinary Advantage</span></h1>
+    <p>Unlock zero delivery fees, priority kitchen dispatch, and exclusive chef tasting menus.</p>
+  </section>
+
+  <div class="plans-container">
+    <!-- Tier 1: Gold Elite -->
+    <div class="plan-card">
+      <div class="plan-badge">POPULAR</div>
+      <h3>Gold Elite</h3>
+      <div class="plan-price">₹499 <span>/ month</span></div>
+      <ul class="plan-features">
+        <li>✓ Free Delivery on orders above ₹199</li>
+        <li>✓ 10% Flat Cashback on all orders</li>
+        <li>✓ Priority Customer Support</li>
+        <li>✓ Regular Kitchen Dispatch Speed</li>
+      </ul>
+      <button class="btn-plan-select" (click)="openPaymentModal('Gold Elite', 499)">Select Gold Plan</button>
+    </div>
+
+    <!-- Tier 2: Diamond Elite -->
+    <div class="plan-card featured-plan">
+      <div class="plan-badge VIP">VIP ACCESS</div>
+      <h3>Diamond Elite</h3>
+      <div class="plan-price">₹999 <span>/ month</span></div>
+      <ul class="plan-features">
+        <li>✓ 100% Free Unlimited Delivery</li>
+        <li>✓ 20% Flat Cashback on all orders</li>
+        <li>✓ VIP Express Kitchen Dispatch</li>
+        <li>✓ Exclusive Access to Chef Tasting Menus</li>
+        <li>✓ Personal Concierge Service</li>
+      </ul>
+      <button class="btn-plan-select vip-btn" (click)="openPaymentModal('Diamond Elite', 999)">Select Diamond VIP</button>
+    </div>
+  </div>
+
+  <!-- Simulated Payment Gateway Modal -->
+  @if (showPaymentModal) {
+    <div class="payment-modal-overlay">
+      <div class="payment-modal">
+        <div class="modal-header">
+          <h3>Secure Payment Gateway</h3>
+          <button class="close-btn" (click)="closePaymentModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="plan-summary">Purchasing <strong>{{ selectedPlanName }}</strong> for <strong>₹{{ selectedPlanPrice }}</strong></p>
+          
+          <div class="payment-options">
+            <label class="pay-option">
+              <input type="radio" name="payMethod" checked />
+              <span>UPI / QR Code (GPay, PhonePe, Paytm)</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="payMethod" />
+              <span>Credit / Debit Card</span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="payMethod" />
+              <span>Net Banking</span>
+            </label>
+          </div>
+
+          <button class="btn-pay-now" [disabled]="isProcessing" (click)="processPayment()">
+            @if (isProcessing) {
+              Processing Payment...
+            } @else {
+              Pay ₹{{ selectedPlanPrice }} & Upgrade
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,161 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh; /* Breathing room ke liye bada space */
+  padding: 2rem;
+}
+
+.auth-card {
+  background: #FFFFFF;
+  padding: 3.5rem 3rem; /* Form ko andar se lamba aur chauda kiya */
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08); /* Soft deep shadow */
+  border: 1px solid #F1F5F9;
+  width: 100%;
+  max-width: 480px; /* Purane 400px se size badhaya */
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.auth-header h2 {
+  margin: 0 0 8px 0;
+  color: #0F172A; /* Premium Slate */
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.auth-header p {
+  color: #64748B;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.error-box {
+  background: #FFF1F2;
+  color: #BE123C;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  font-size: 15px;
+  border: 1px solid #FECDD3;
+  font-weight: 500;
+  text-align: center;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+/* Input boxes ko bada aur modern banaya */
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 16px 18px; 
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background: #F8FAFC;
+  color: #0F172A;
+  font-family: inherit;
+}
+
+/* Soft Red Glow on Focus (No more orange) */
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #E11D48;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1); 
+}
+
+.auth-btn {
+  width: 100%;
+  background: #E11D48;
+  color: white;
+  border: none;
+  padding: 18px;
+  font-size: 1.15rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: 10px;
+  transition: all 0.3s;
+  box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.4);
+}
+
+.auth-btn:hover {
+  background: #BE123C;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(225, 29, 72, 0.5);
+}
+
+.switch-link {
+  margin-top: 25px;
+  font-size: 1rem;
+  text-align: center;
+  color: #64748B;
+}
+
+.switch-link a {
+  color: #E11D48;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.3s;
+}
+
+.switch-link a:hover {
+  color: #9F1239;
+  text-decoration: underline;
+}
+
+/* --- Premium Dropdown Styling (Merged Here) --- */
+.form-group select {
+  /* Browser ka boring default arrow aur design hatane ke liye */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Custom modern arrow icon (SVG) lagana */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230F172A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 18px;
+  
+  padding-right: 45px; /* Arrow ke liye jagah banana */
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Hover karne par halka sa change */
+.form-group select:hover {
+  border-color: #CBD5E1;
+  background-color: #F1F5F9;
+}
+
+/* Jab click/focus ho toh arrow Red ho jaye */
+.form-group select:focus {
+  border-color: #E11D48;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1); 
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E11D48' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Andar ke options ka text style */
+.form-group select option {
+  font-weight: 500;
+  color: #0F172A;
+  background-color: white;
+}

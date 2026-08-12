@@ -1,0 +1,174 @@
+.my-orders-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.orders-header h2 {
+  font-size: 2rem;
+  color: #ED0C53;
+  margin: 0 0 8px 0;
+  font-weight: 800;
+}
+
+.orders-header p {
+  color: #64748B;
+  font-size: 1rem;
+  margin: 0 0 2rem 0;
+}
+
+.empty-orders {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #FFFFFF;
+  border-radius: 20px;
+  border: 1px solid #E2E8F0;
+}
+
+.empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.order-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.order-number {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0F172A;
+  display: block;
+}
+
+.order-date {
+  font-size: 0.8rem;
+  color: #94A3B8;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.status-badge.prep { background: #FEF3C7; color: #D97706; }
+.status-badge.out { background: #E0F2FE; color: #0284C7; }
+.status-badge.done { background: #D1FAE5; color: #059669; }
+
+/* 🔴 Read-Only Live Tracking Visuals */
+.tracker-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8FAFC;
+  padding: 1rem;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+}
+
+.tracker-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.35;
+  transition: all 0.3s;
+}
+
+.tracker-step.active {
+  opacity: 1;
+}
+
+.step-icon {
+  font-size: 1.4rem;
+}
+
+.tracker-step span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.tracker-line {
+  flex-grow: 1;
+  height: 3px;
+  background: #CBD5E1;
+  margin: 0 12px;
+}
+
+.tracker-line.active {
+  background: #10B981;
+}
+
+.card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.items-box, .delivery-box {
+  background: #F8FAFC;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #F1F5F9;
+}
+
+.items-box strong, .delivery-box strong {
+  font-size: 0.8rem;
+  color: #64748B;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.items-box p, .delivery-box p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 1rem;
+}
+
+.total-label {
+  font-weight: 600;
+  color: #64748B;
+}
+
+.total-amount {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #E11D48;
+}
+
+@media (max-width: 600px) {
+  .card-body {
+    grid-template-columns: 1fr;
+  }
+}

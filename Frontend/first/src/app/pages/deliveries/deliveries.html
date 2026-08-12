@@ -1,0 +1,66 @@
+<div class="deliveries-container">
+  
+  <div class="deliveries-header">
+    <h2>🚚 Pending Deliveries & Orders</h2>
+    <p>Track real-time dispatch statuses and manage delivery progression.</p>
+  </div>
+
+  @if (orders.length === 0) {
+    <div class="empty-orders" style="text-align: center; padding: 40px; color: #64748B;">
+      <p style="font-size: 18px; font-weight: 500;">No pending deliveries found.</p>
+      <span>Orders placed from the dashboard will appear here in real-time.</span>
+    </div>
+  } @else {
+    <div class="orders-grid">
+      @for (order of orders; track order.id) {
+        <div class="order-card" [class.completed]="order.status === 'Delivered'">
+          
+          <div class="order-card-header">
+            <span class="order-id">{{ order.orderNumber }}</span>
+            <span class="status-badge" [class.prep]="order.status === 'Preparing'" 
+                                       [class.out]="order.status === 'Out for Delivery'"
+                                       [class.done]="order.status === 'Delivered'">
+              {{ order.status }}
+            </span>
+          </div>
+
+          <div class="order-body">
+            <div class="customer-info">
+              <h4>{{ order.customerName }}</h4>
+              <p class="address">📍 {{ order.address || 'Standard Delivery Location' }}</p>
+            </div>
+
+            <div class="items-summary">
+              <strong>Ordered Items:</strong>
+              <p>{{ order.items }}</p>
+            </div>
+
+            <div class="order-footer-row">
+              <span class="order-total">Total: ₹{{ order.total }}</span>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button class="action-status-btn" 
+                    [class.active-action]="order.status === 'Preparing'"
+                    (click)="updateStatus(order, 'Preparing')">
+              Preparing
+            </button>
+            <button class="action-status-btn" 
+                    [class.active-action]="order.status === 'Out for Delivery'"
+                    (click)="updateStatus(order, 'Out for Delivery')">
+              Out for Delivery
+            </button>
+            <button class="action-status-btn success" 
+                    [class.active-action]="order.status === 'Delivered'"
+                    (click)="updateStatus(order, 'Delivered')">
+              Delivered
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+
+</div>

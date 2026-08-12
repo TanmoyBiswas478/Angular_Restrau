@@ -1,0 +1,178 @@
+<div class="dashboard-container">
+  <!-- Left Side: Menu & Categories -->
+  <div class="menu-section">
+    <div class="dashboard-header">
+      <h2>Curated Menu</h2>
+      <p>Select your preferred luxury dishes for immediate dispatch.</p>
+      
+      <!-- 🌟 DYNAMIC TIERS BANNERS -->
+      <!-- Tier 4: Diamond VIP -->
+      @if (currentUser && userTier === 'Diamond Elite') {
+        <div class="elite-banner diamond-banner">
+          💎 <strong>Diamond VIP Member Active:</strong> 100% Free Unlimited Delivery + 20% Flat Cashback + Express Kitchen Dispatch!
+        </div>
+      } 
+      <!-- Tier 3: Gold Elite -->
+      @else if (currentUser && isEliteUser) {
+        <div class="elite-banner gold-banner">
+          🥇 <strong>Gold Elite Active:</strong> Free Delivery on orders > ₹199 + 10% Flat Cashback!
+        </div>
+      } 
+      <!-- Tier 2: Logged-in Free User -->
+      @else if (currentUser) {
+        <div class="elite-banner free-banner">
+          ✨ <strong>Upgrade to YUMMMY Elite:</strong> Save delivery fees & earn up to 20% cashback on every order. <a routerLink="/membership" style="color: #E11D48; font-weight: 700;">Explore Plans</a>
+        </div>
+      }
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div class="category-filters">
+      @for (cat of categories; track cat) {
+        <button
+          class="filter-chip"
+          [class.active]="selectedCategory === cat"
+          (click)="filterCategory(cat)"
+        >
+          {{ cat }}
+        </button>
+      }
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div style="text-align: center; padding: 40px; color: #64748B;">
+        <p>Loading live menu from database...</p>
+      </div>
+    } @else if (filteredItems.length === 0) {
+      <div style="text-align: center; padding: 40px; color: #64748B;">
+        <p>No dishes found in this category.</p>
+      </div>
+    } @else {
+      <!-- Food Grid -->
+      <div class="food-grid">
+        @for (food of filteredItems; track food.id) {
+          <div class="food-card">
+            <div class="food-img" [style.background-image]="'url(' + food.image + ')'">
+              <span class="rating-badge">★ {{ food.rating }}</span>
+            </div>
+            <div class="food-details">
+              <div class="food-title-row">
+                <h3>{{ food.name }}</h3>
+                <span class="food-price">₹{{ food.price }}</span>
+              </div>
+              <p>{{ food.description }}</p>
+
+              <!-- Stock Status Info -->
+              <div style="margin-bottom: 8px; font-size: 0.85rem; font-weight: 600;">
+                @if (food.stock > 0) {
+                  <span style="color: #16A34A;">Stock: {{ food.stock }} {{ food.unit }}</span>
+                } @else {
+                  <span style="color: #DC2626;">Out of Stock</span>
+                }
+              </div>
+
+              <!-- 🌟 LIVE MYSQL STOCK CHECK FIX (Direct food.stock) -->
+              @if (food.stock > 0) {
+                <button class="add-btn" (click)="addToCart(food)">+ Add to Cart</button>
+              } @else {
+                <button class="out-of-stock-btn" disabled style="opacity: 0.6; cursor: not-allowed; background: #94A3B8;">
+                  Out of Stock
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Right Side: Live Cart Drawer -->
+  <div class="cart-section">
+    <div class="cart-card">
+      <h3>🛒 Your Order</h3>
+
+      @if (cart.length === 0) {
+        <div class="empty-cart">
+          <p>Your cart is empty.</p>
+          <span>Add some luxury items to begin.</span>
+        </div>
+      } @else {
+        <div class="cart-items-list">
+          @for (c of cart; track c.item.id; let i = $index) {
+            <div class="cart-item-row">
+              <div class="cart-item-info">
+                <h4>{{ c.item.name }}</h4>
+                <span>₹{{ c.item.price }} × {{ c.quantity }}</span>
+
+                <!-- Qty Controls -->
+                <div
+                  class="cart-item-controls"
+                  style="display: flex; align-items: center; gap: 8px; margin-top: 6px"
+                >
+                  <button
+                    class="qty-btn"
+                    (click)="decreaseQty(c)"
+                    style="padding: 2px 8px; cursor: pointer; color: black;"
+                  >
+                    -
+                  </button>
+
+                  @if (c.quantity <= 5) {
+                    <span class="qty-display" style="font-weight: 600">{{ c.quantity }}</span>
+                  } @else {
+                    <input
+                      type="number"
+                      class="qty-input-box"
+                      [value]="c.quantity"
+                      (change)="onQuantityInputChange(c, $event)"
+                      min="1"
+                      [max]="c.item.stock"
+                      style="
+                        width: 50px;
+                        text-align: center;
+                        padding: 2px;
+                        color: #000000;
+                        border: 1px solid #000000;
+                        border-radius: 4px;
+                      "
+                    />
+                  }
+
+                  <button
+                    class="qty-btn"
+                    (click)="increaseQty(c)"
+                    style="padding: 2px 8px; cursor: pointer; color: black;"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <button class="remove-btn" (click)="removeFromCart(i)">✕</button>
+            </div>
+          }
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-row total-row">
+            <span>Total Amount:</span>
+            <span>₹{{ totalPrice }}</span>
+          </div>
+
+          <!-- 🌟 DYNAMIC CART DISCOUNT & CASHBACK INFO -->
+          @if (userTier === 'Diamond Elite') {
+            <div style="color: #0EA5E9; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-align: right;">
+              💎 100% Free Unlimited Delivery + 20% Cashback
+            </div>
+          } @else if (isEliteUser) {
+            <div style="color: #D97706; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; text-align: right;">
+              🥇 Free Delivery Applied (> ₹199) + 10% Cashback
+            </div>
+          }
+
+          <button class="checkout-btn" (click)="checkout()">Place Secure Order</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

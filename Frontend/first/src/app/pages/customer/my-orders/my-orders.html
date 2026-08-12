@@ -1,0 +1,81 @@
+<div class="my-orders-container">
+  
+  <div class="orders-header">
+    <h2>🛍️ My Orders & Live Tracking</h2>
+    <p>Track your active food dispatches and view past order history in real-time.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <p>🔄 Loading your order history...</p>
+  </div>
+
+  <div *ngIf="!isLoading && myOrders.length === 0" class="empty-orders">
+    <div class="empty-icon">📦</div>
+    <h3>No orders placed yet!</h3>
+    <p>Looks like you haven't ordered anything recently. Order your favorite food from the main menu.</p>
+  </div>
+
+  <div *ngIf="!isLoading && myOrders.length > 0" class="orders-list">
+    <div *ngFor="let order of myOrders" class="order-card" [class.delivered]="order.status === 'Delivered'">
+      
+      <!-- Card Top Info Header -->
+      <div class="card-header">
+        <div>
+
+          <span class="order-number">ORDER ID: #{{ order.orderNumber }}</span>
+          <!-- <span class="order-date">Read-Only Live Record</span> -->
+           
+        </div>
+        
+        <span class="status-badge" [ngClass]="{
+          'prep': order.status === 'Preparing',
+          'out': order.status === 'Out for Delivery',
+          'done': order.status === 'Delivered'
+        }">
+          {{ order.status }}
+        </span>
+      </div>
+      <hr>
+
+      <!-- Live Tracking Visual Bar -->
+      <div class="tracker-wrapper">
+        <div class="tracker-step" [class.active]="order.status === 'Preparing' || order.status === 'Out for Delivery' || order.status === 'Delivered'">
+          <div class="step-icon">🍳</div>
+          <span>Preparing</span>
+        </div>
+        <div class="tracker-line" [class.active]="order.status === 'Out for Delivery' || order.status === 'Delivered'"></div>
+        
+        <div class="tracker-step" [class.active]="order.status === 'Out for Delivery' || order.status === 'Delivered'">
+          <div class="step-icon">🛵</div>
+          <span>Out for Delivery</span>
+        </div>
+        <div class="tracker-line" [class.active]="order.status === 'Delivered'"></div>
+
+        <div class="tracker-step" [class.active]="order.status === 'Delivered'">
+          <div class="step-icon">🎉</div>
+          <span>Delivered</span>
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <div class="card-body">
+        <div class="items-box">
+          <strong>Items Ordered:</strong>
+          <p>{{ order.items }}</p>
+        </div>
+        <div class="delivery-box">
+          <strong>Delivery Address:</strong>
+          <p>📍 {{ order.address }}</p>
+        </div>
+      </div>
+
+      <!-- Footer Total -->
+      <div class="card-footer">
+        <span class="total-label">Total Amount Paid:</span>
+        <span class="total-amount">₹{{ order.total }}</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>

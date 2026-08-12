@@ -1,0 +1,399 @@
+.chef-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.chef-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chef-header h2 {
+  font-size: 2rem;
+  color: #ED0C53;
+  margin: 0 0 6px 0;
+  font-weight: 800;
+}
+
+.chef-header p {
+  color: #64748B;
+  margin: 0;
+}
+
+/* 🎯 Header Right Section & Chef Badge */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chef-badge {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1E40AF;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.add-btn {
+  background: #0F172A;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  background: #1E293B;
+}
+
+.alert-banner {
+  background: #FEF2F2;
+  border: 1px solid #FECDD3;
+  color: #9F1239;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.search-bar-box input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid #CBD5E1;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+  background: var(--bg-card, #FFFFFF);
+  color: var(--text-color, #0F172A);
+}
+
+.search-bar-box input:focus {
+  outline: none;
+  border-color: #ED0C53;
+}
+
+/* 📊 TABLE STYLES */
+.table-wrapper {
+  background: var(--bg-card, #FFFFFF);
+  border-radius: 18px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  overflow-x: auto;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.inventory-table th {
+  background: #F8FAFC;
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 2px solid #E2E8F0;
+  white-space: nowrap;
+}
+
+.inventory-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 0.95rem;
+  color: #0F172A;
+  vertical-align: middle;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.category-tag {
+  background: #F1F5F9;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.qty-text {
+  font-weight: 800;
+  color: #0F172A;
+}
+
+/* Status Badges */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.badge.ok { 
+  background: #D1FAE5; 
+  color: #059669; 
+}
+
+.badge.low { 
+  background: #FEF3C7; 
+  color: #D97706; 
+}
+
+.badge.out { 
+  background: #FEE2E2; 
+  color: #DC2626; 
+}
+
+/* 🎯 ADMIN APPROVAL BADGES & BUTTONS */
+.approval-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.approval-badge.requested {
+  background: #FEF3C7;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+
+.approval-badge.approved {
+  background: #D1FAE5;
+  color: #047857;
+  border: 1px solid #A7F3D0;
+}
+
+.approval-badge.normal {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+/* 📩 Request Restock Trigger Button for Chef */
+.request-admin-btn {
+  background: #2563EB;
+  color: #FFFFFF;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.request-admin-btn:hover {
+  background: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+/* 🎯 Chef EID Audit Tracking Tag */
+.chef-eid-tag {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #334155;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+/* 🎯 Bulk Quantity Action Box & Buttons */
+.bulk-qty-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qty-input {
+  width: 85px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.qty-input:focus {
+  outline: none;
+  border-color: #ED0C53;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+.action-btn.add {
+  background: #059669;
+  color: white;
+}
+
+.action-btn.add:hover {
+  background: #047857;
+}
+
+.action-btn.remove {
+  background: #E11D48;
+  color: white;
+}
+
+.action-btn.remove:hover {
+  background: #BE123C;
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-card {
+  background: #FFFFFF;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-card h3 {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  color: #0F172A;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.form-group-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group, .form-group-row div {
+  margin-bottom: 1rem;
+}
+
+.form-group label, .form-group-row label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+.form-group input, .form-group select, .form-group-row input, .form-group-row select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #ED0C53;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.5rem;
+}
+
+.cancel-btn {
+  background: #E2E8F0;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #475569;
+}
+
+.cancel-btn:hover {
+  background: #CBD5E1;
+}
+
+.save-btn {
+  background: #ED0C53;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-btn:hover {
+  background: #D00A47;
+}
+
+/* Responsive Handling */
+@media (max-width: 768px) {
+  .chef-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .add-btn {
+    width: 100%;
+  }
+}
+
+.updated-by-text {
+  font-weight: 700;
+  color: #1E293B;
+  font-size: 0.9rem;
+  background: #F8FAFC;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #E2E8F0;
+  display: inline-block;
+}

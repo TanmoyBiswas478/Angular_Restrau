@@ -1,0 +1,183 @@
+<div class="inventory-container">
+  
+  <!-- Header Section -->
+  <div class="inventory-header">
+    <h2>📦 Manage Stock & Inventory</h2>
+    <p>Monitor real-time item availability and update stock levels instantly.</p>
+  </div>
+
+  <div class="inventory-grid">
+    
+    <!-- Left Side: Stock Table Card -->
+    <div class="stock-table-card">
+      <h3>Active Inventory List</h3>
+      
+      <div class="table-responsive">
+        @if (isLoading) {
+          <p style="padding: 20px; text-align: center; color: #64748B;">Loading database inventory...</p>
+        } @else if (inventoryItems.length === 0) {
+          <p style="padding: 20px; text-align: center; color: #64748B;">No inventory items found in database.</p>
+        } @else {
+          <table>
+            <thead>
+              <tr>
+                <th>Item Dish</th>
+                <th>Category (Editable)</th>
+                <th>Price</th>
+                <th>Stock Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of inventoryItems; track item.id) {
+                <tr>
+                  <!-- Item Preview Image & Name -->
+                  <td class="item-name-col">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <img [src]="item.image_url || 'https://ui-avatars.com/api/?name=' + item.item_name" 
+                           (error)="onImageError($event, item.item_name)" 
+                           style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid #CBD5E1;" />
+                      <strong>{{ item.item_name }}</strong>
+                    </div>
+                  </td>
+
+                  <!-- Category -->
+                  <td>
+                    <input type="text" 
+                           [(ngModel)]="item.category" 
+                           (change)="onCategoryChange(item)" 
+                           style="padding: 4px 8px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; width: 130px;">
+                  </td>
+
+                  <!-- Price -->
+                  <td>₹{{ item.price_per_unit }}</td>
+
+                  <!-- Stock Indicator -->
+                  <td>
+                    <span class="stock-indicator" 
+                          [class.low-stock]="item.quantity < 10 && item.quantity > 0" 
+                          [class.out-of-stock]="item.quantity === 0">
+                      @if (item.quantity === 0) {
+                        <strong style="color: #DC2626;">Out of Stock</strong>
+                      } @else {
+                        {{ item.quantity }} {{ item.unit }}
+                        @if (item.quantity < 10) {
+                          <small style="color: #D97706; margin-left: 4px;">(Low)</small>
+                        }
+                      }
+                    </span>
+                  </td>
+
+                  <!-- Actions -->
+                  <td>
+                    <div class="action-buttons" style="display: flex; align-items: center; gap: 6px;">
+                      <button class="stock-btn minus" 
+                              (click)="updateStock(item, -1)" 
+                              style="padding: 2px 8px; cursor: pointer;">-</button>
+                      
+                      <input type="number" 
+                             [(ngModel)]="item.quantity" 
+                             (change)="onStockInputChange(item)" 
+                             style="width: 55px; padding: 4px; border: 1px solid #CBD5E1; border-radius: 6px; text-align: center;" 
+                             min="0">
+
+                      <button class="stock-btn plus" 
+                              (click)="updateStock(item, 1)" 
+                              style="padding: 2px 8px; cursor: pointer;">+</button>
+
+                      <button class="delete-btn" 
+                              (click)="deleteItem(item.id)" 
+                              style="cursor: pointer; margin-left: 4px; background: none; border: none; font-size: 16px;">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+
+    <!-- Right Side: Add New Item Form -->
+    <div class="add-stock-card">
+      <h3>Add New Item</h3>
+      
+      <!-- Dish Name -->
+      <div class="form-group">
+        <label>Item / Dish Name *</label>
+        <input 
+          type="text" 
+          [ngModel]="newItemName"
+          (keydown)="blockNumbersAndSymbols($event)"
+          (input)="onItemNameInput($event)"
+          placeholder="e.g. Lobster Thermidor"
+        >
+        <small *ngIf="itemNameError" class="error-msg" style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;">
+          {{ itemNameError }}
+        </small>
+      </div>
+
+      <!-- Image URL -->
+      <div class="form-group">
+        <label>Dish Image URL (Optional / Google Drive)</label>
+        <input type="text" [(ngModel)]="newItemImageUrl" placeholder="https://images.unsplash.com/... or Drive link">
+      </div>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label>Category *</label>
+        <input 
+          type="text" 
+          list="category-list" 
+          [ngModel]="newItemCategory" 
+          (keydown)="blockNumbersForCategory($event)"
+          (input)="onCategoryInput($event)"
+          placeholder="Select or type category e.g. Starter"
+        >
+        <datalist id="category-list">
+          @for (cat of availableCategories; track cat) {
+            <option [value]="cat"></option>
+          }
+        </datalist>
+        <small *ngIf="categoryError" class="error-msg" style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;">
+          {{ categoryError }}
+        </small>
+      </div>
+
+      <!-- Price -->
+      <div class="form-group">
+        <label>Price (₹) *</label>
+        <input type="number" [(ngModel)]="newItemPrice" (input)="validateItemForm()" placeholder="e.g. 1299">
+        <small *ngIf="priceError" class="error-msg" style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;">
+          {{ priceError }}
+        </small>
+      </div>
+
+      <!-- Stock Quantity -->
+      <div class="form-group">
+        <label>Initial Stock Quantity *</label>
+        <input type="number" [(ngModel)]="newItemStock" (input)="validateItemForm()" placeholder="e.g. 50">
+        <small *ngIf="stockError" class="error-msg" style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;">
+          {{ stockError }}
+        </small>
+      </div>
+
+      <!-- Unit Measurement -->
+      <div class="form-group">
+        <label>Unit Measurement</label>
+        <select [(ngModel)]="newItemUnit" style="width: 100%; padding: 8px; border: 1px solid #CBD5E1; border-radius: 6px;">
+          <option value="pcs">Pcs / Portions</option>
+          <option value="kg">Kilograms (kg)</option>
+          <option value="liters">Liters (L)</option>
+          <option value="packets">Packets</option>
+        </select>
+      </div>
+
+      <button class="submit-btn" (click)="addItem()" style="margin-top: 10px; width: 100%; cursor: pointer;">
+        Add to Database Inventory
+      </button>
+    </div>
+
+  </div>
+
+</div>

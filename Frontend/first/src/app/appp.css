@@ -1,0 +1,77 @@
+/* Global Body Reset */
+::ng-deep body {
+  margin: 0;
+  padding: 0;
+  background-color: #F8FAFC !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.main-content {
+  /* Ultra-smooth sliding animation */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  
+  margin-left: 0;
+  width: 100%;
+  
+  /* Navbar ke liye top space */
+  padding-top: 60px; 
+  box-sizing: border-box;
+  min-height: 100vh;
+  
+  /* 🌟 VIBRANT & RICH LIGHT LUXURY BACKGROUND */
+  background: linear-gradient(135deg, #FFF1F2 50%, #FEE2E2 50%, #F8FAFC 100%);
+  background-attachment: fixed;
+  color: #0F172A;
+}
+
+/* Jab sidebar open hoga */
+.main-content.shifted {
+  margin-left: 260px; 
+  width: calc(100% - 260px); 
+}
+
+/* ==========================================
+   📜 SCROLL HIDE/SHOW NAVBAR WRAPPER STYLES
+   ========================================== */
+/* app.css - Fixed Navbar Overlay */
+.nav-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  /* Dark Glassmorphism Effect for Navbar */
+  background: rgba(15, 23, 42, 0.90) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.3s ease;
+}
+
+/* Hide animation disable kar do taaki navbar white na lage */
+.nav-wrapper.header-hidden {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* --- 🌟 Global Kite / Ribbon Cursor Trail Styling --- */
+.kite-tail-dot {
+  position: fixed !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: linear-gradient(135deg, #FF4B72 0%, #F59E0B 100%) !important;
+  border-radius: 50% !important;
+  pointer-events: none !important;
+  z-index: 2147483647 !important;
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.8), 0 0 24px rgba(245, 158, 11, 0.6) !important;
+  transform: translate(-50%, -50%) !important;
+  left: var(--mouse-x, 50vw);
+  top: var(--mouse-y, 50vh);
+}
+
+.dot-1 { transition: left 0.04s ease-out, top 0.04s ease-out; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.dot-2 { transition: left 0.08s ease-out, top 0.08s ease-out; opacity: 0.85; transform: translate(-50%, -50%) scale(0.85); }
+.dot-3 { transition: left 0.12s ease-out, top 0.12s ease-out; opacity: 0.7; transform: translate(-50%, -50%) scale(0.7); }
+.dot-4 { transition: left 0.16s ease-out, top 0.16s ease-out; opacity: 0.45; transform: translate(-50%, -50%) scale(0.55); }
+.dot-5 { transition: left 0.2s ease-out, top 0.2s ease-out; opacity: 0.2; transform: translate(-50%, -50%) scale(0.4); }

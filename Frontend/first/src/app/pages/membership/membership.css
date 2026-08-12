@@ -1,0 +1,112 @@
+.membership-layout {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #172554 100%);
+  color: #F8FAFC;
+  /* 🌟 Fixed Top Navbar Spacing Adjustment */
+  margin-top: -60px;
+  padding-top: 80px;
+  padding-bottom: 4rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.membership-hero {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem auto;
+}
+
+.badge-elite {
+  display: inline-block;
+  color: #FCD34D;
+  border: 1px solid rgba(252, 211, 77, 0.4);
+  background: rgba(252, 211, 77, 0.1);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 1.5rem;
+}
+
+.membership-hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+.membership-hero p { color: #94A3B8; font-size: 1.15rem; }
+
+.plans-container {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.plan-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 2.5rem;
+  width: 340px;
+  position: relative;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.plan-card:hover { transform: translateY(-8px); border-color: rgba(225, 29, 72, 0.5); }
+.featured-plan { border-color: #F59E0B; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2); }
+
+.plan-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #E11D48;
+  color: #FFF;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+.plan-badge.VIP { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+.plan-card h3 { font-size: 1.8rem; margin: 0 0 1rem 0; }
+.plan-price { font-size: 2.5rem; font-weight: 800; color: #FFF; margin-bottom: 1.5rem; }
+.plan-price span { font-size: 1rem; color: #94A3B8; font-weight: 400; }
+
+.plan-features { list-style: none; padding: 0; margin: 0 0 2rem 0; flex-grow: 1; }
+.plan-features li { margin-bottom: 12px; color: #CBD5E1; font-size: 0.95rem; }
+
+.btn-plan-select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #E11D48;
+  color: #FFF;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-plan-select:hover { background: #BE123C; }
+.vip-btn { background: linear-gradient(135deg, #F59E0B, #D97706); }
+.vip-btn:hover { background: linear-gradient(135deg, #D97706, #B45309); }
+
+/* Modal Styling */
+.payment-modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px);
+  display: flex; justify-content: center; align-items: center; z-index: 9999;
+}
+.payment-modal {
+  background: #0F172A; border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px; width: 90%; max-width: 440px; padding: 1.5rem; color: #FFF;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
+.close-btn { background: none; border: none; color: #94A3B8; font-size: 1.2rem; cursor: pointer; }
+.modal-body { padding-top: 1rem; }
+.pay-option { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; cursor: pointer; }
+.btn-pay-now { width: 100%; padding: 14px; background: #10B981; border: none; border-radius: 12px; color: #FFF; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+.btn-pay-now:disabled { opacity: 0.6; cursor: not-allowed; }

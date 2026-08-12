@@ -1,0 +1,175 @@
+<div class="premium-layout">
+  
+  <!-- 1. Dynamic Hero Section for 4 Customer Types -->
+  <section class="hero-modern animate-fade-in">
+    <div class="glow-orb orb-top"></div>
+    <div class="glow-orb orb-bottom"></div>
+    
+    <div class="hero-content">
+      <div class="badge-premium pulse-badge">✦ The Standard of Excellence</div>
+      
+      <h1 class="hero-title">
+        Elevate Your <br />
+        <span class="text-gradient">Dining Experience.</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        World-class cuisine delivered with uncompromising speed and precision. 
+        No compromises, just perfection at your doorstep.
+      </p>
+
+      <!-- 🌟 STATE 4: Diamond VIP Member (₹999) -->
+      @if (currentUser && eliteTier === 'Diamond Elite') {
+        <div class="action-bar animate-pop">
+          <div class="user-status diamond-status-badge">
+            <span class="status-dot"></span>
+            💎 Diamond VIP: {{ currentUser.email }} (20% Flat Cashback & Express Dispatch)
+          </div>
+          <a routerLink="/dashboard" class="btn-solid glow-btn vip-glow">VIP Dashboard &rarr;</a>
+        </div>
+      }
+      <!-- 🌟 STATE 3: Gold Elite Member (₹499) -->
+      @else if (currentUser && isEliteMember) {
+        <div class="action-bar animate-pop">
+          <div class="user-status gold-status-badge">
+            <span class="status-dot"></span>
+            🥇 Gold Elite: {{ currentUser.email }} (10% Cashback Active)
+          </div>
+          <a routerLink="/dashboard" class="btn-solid glow-btn">Gold Dashboard &rarr;</a>
+        </div>
+      }
+      <!-- 🌟 STATE 2: Logged In Normal / Free User -->
+      @else if (currentUser) {
+        <div class="action-bar animate-pop">
+          <div class="user-status">
+            <span class="status-dot"></span>
+            Welcome, {{ currentUser.name }}
+          </div>
+          <button class="btn-solid glow-btn" (click)="navigateToMembership()">✨ Upgrade to YUMMMY Elite</button>
+        </div>
+      }
+      <!-- 🌟 STATE 1: Viewer / Guest Visitor -->
+      @else {
+        <div class="action-bar animate-pop">
+          <a routerLink="/login" class="btn-solid glow-btn">Sign In</a>
+          <a routerLink="/register" class="btn-ghost">Create Account</a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- 2. Explore Dynamic Categories Section -->
+  <section class="explore-section">
+    <div class="section-heading-center">
+      <h2>Curated Collections</h2>
+      <p>Discover our hand-picked selections for every palate.</p>
+    </div>
+    
+    <div class="categories-flex">
+      @for (cat of categories; track cat) {
+        <div class="category-chip hover-scale" 
+             [class.active]="selectedCategory === cat"
+             (click)="selectCategory(cat)">
+          {{ cat }}
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- 3. Dynamic Preview Section with Smooth Horizontal Slider & Arrows -->
+  <section class="featured-dishes-section">
+    <div class="section-heading-row">
+      <div class="section-heading-left" style="margin-bottom: 0;">
+        <h2>Menu Preview</h2>
+        <div class="header-line"></div>
+      </div>
+      
+      <!-- Slider Navigation Arrows -->
+      <div class="slider-arrow-controls">
+        <button class="slider-arrow-btn" (click)="scrollMenu('left')">&#10094;</button>
+        <button class="slider-arrow-btn" (click)="scrollMenu('right')">&#10095;</button>
+      </div>
+    </div>
+
+    <div class="dish-slider-container" #dishSlider>
+      @for (dish of filteredDishes; track dish.id) {
+        <div class="dish-card hover-lift slider-item">
+          <div class="dish-image" [style.background-image]="'url(' + dish.image + ')'">
+            <div class="dish-overlay">
+              <span class="tag">★ {{ dish.rating }}</span>
+            </div>
+          </div>
+          <div class="dish-info">
+            <div class="dish-header-row">
+              <h3>{{ dish.name }}</h3>
+              <span class="price">₹{{ dish.price }}</span>
+            </div>
+            <p>{{ dish.description }}</p>
+            <button class="btn-outline-dark" routerLink="/dashboard">Order in Dashboard</button>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state-card" style="width: 100%;">
+          <div class="empty-icon">🍽️</div>
+          <p style="font-size: 1.15rem; font-weight: 600; color: #0F172A; margin-bottom: 6px;">No items found in this collection right now.</p>
+          <span style="font-size: 0.9rem; color: #64748B;">Add items from the inventory panel to showcase them here instantly.</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- 4. Premium Process Section -->
+  <section class="process-section-wrap">
+    <div class="section-heading-center">
+      <h2>Redefining Delivery</h2>
+      <p>The journey from our kitchens to your table.</p>
+    </div>
+    
+    <div class="process-grid">
+      <div class="process-card hover-lift">
+        <div class="step-indicator">01</div>
+        <h3>Curate</h3>
+        <p>We partner exclusively with top-tier culinary artists and highly-rated local establishments to ensure absolute quality.</p>
+      </div>
+      
+      <div class="process-card offset-card hover-lift">
+        <div class="step-indicator">02</div>
+        <h3>Dispatch</h3>
+        <p>Our intelligent routing algorithms ensure your meal leaves the kitchen at the precise moment for maximum freshness.</p>
+      </div>
+      
+      <div class="process-card hover-lift">
+        <div class="step-indicator">03</div>
+        <h3>Savor</h3>
+        <p>Experience restaurant-quality temperature and presentation, right at your dining table without the wait.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Dynamic Elite CTA Section -->
+  <section class="elite-cta">
+    <div class="elite-content">
+      @if (currentUser && eliteTier === 'Diamond Elite') {
+        <h2>💎 You possess the Ultimate Diamond VIP Pass</h2>
+        <p>Unlimited free delivery on all orders, VIP concierge support, and 20% flat cashback applied automatically.</p>
+      } @else if (currentUser && isEliteMember) {
+        <h2>🥇 Gold Elite Active Membership</h2>
+        <p>Free delivery on orders above ₹199 with 10% flat cashback. Upgrade to Diamond anytime for VIP Express Perks!</p>
+        <button class="btn-solid glow-btn" (click)="navigateToMembership()">Upgrade to Diamond VIP</button>
+      } @else {
+        <h2>Join YUMMMY 😋 Elite</h2>
+        <p>Unlock priority delivery, exclusive chef tasting menus, and zero delivery fees on all premium orders.</p>
+        <button class="btn-solid glow-btn" (click)="navigateToMembership()">Explore Membership Plans</button>
+      }
+    </div>
+  </section>
+
+  <!-- 6. Footer -->
+  <footer class="premium-footer">
+    <div class="footer-content">
+      <h2>🍔 YUMMMY 😋</h2>
+      <p>© 2026 YUMMMY 😋 Premium Delivery. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div>

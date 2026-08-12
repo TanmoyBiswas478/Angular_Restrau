@@ -1,0 +1,101 @@
+/* ==========================================
+   🎨 DYNAMIC THEME SYSTEM (GLOBAL CSS VARIABLES)
+   ========================================== */
+
+/* 1. DARK LUXURY THEME (Default) */
+::ng-deep :root, 
+::ng-deep [data-theme="dark"] {
+  --bg-body: #020617;
+  --bg-main: linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #172554 100%);
+  --nav-bg: #0F172A;
+  --text-color: #F8FAFC;
+  --nav-border: rgba(255, 255, 255, 0.1);
+}
+
+/* 2. VIBRANT LIGHT LUXURY THEME */
+::ng-deep [data-theme="light"] {
+  --bg-body: #F8FAFC;
+  --bg-main: linear-gradient(135deg, #FFF1F2 50%, #e99b9b 50%, #F8FAFC 100%);
+  --nav-bg: #FFFFFF;
+  --text-color: #0F172A;
+  --nav-border: rgba(15, 23, 42, 0.08);
+}
+
+/* Global Body Reset */
+::ng-deep body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-body) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.main-content {
+  /* Ultra-smooth sliding animation */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-left: 0;
+  width: 100%;
+  
+  /* Navbar ke liye top space */
+  padding-top: 60px; 
+  box-sizing: border-box;
+  min-height: 100vh;
+  
+  /* Dynamic Background & Text */
+  background: var(--bg-main);
+  background-attachment: fixed;
+  color: var(--text-color);
+}
+
+/* Jab sidebar open hoga */
+.main-content.shifted {
+  margin-left: 260px; 
+  width: calc(100% - 260px); 
+}
+
+/* ==========================================
+   📜 SCROLL HIDE/SHOW NAVBAR WRAPPER STYLES
+   ========================================== */
+.nav-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  
+  background: var(--nav-bg) !important; 
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--nav-border);
+  
+  /* Smooth Slide Hide/Show Animation */
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease-in-out, background 0.3s ease;
+}
+
+/* Jab user scroll down karega */
+.nav-wrapper.header-hidden {
+  transform: translateY(-100%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* --- 🌟 Global Kite / Ribbon Cursor Trail Styling --- */
+.kite-tail-dot {
+  position: fixed !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: linear-gradient(135deg, #FF4B72 0%, #F59E0B 100%) !important;
+  border-radius: 50% !important;
+  pointer-events: none !important;
+  z-index: 2147483647 !important;
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.8), 0 0 24px rgba(245, 158, 11, 0.6) !important;
+  transform: translate(-50%, -50%) !important;
+  left: var(--mouse-x, 50vw);
+  top: var(--mouse-y, 50vh);
+}
+
+.dot-1 { transition: left 0.04s ease-out, top 0.04s ease-out; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.dot-2 { transition: left 0.08s ease-out, top 0.08s ease-out; opacity: 0.85; transform: translate(-50%, -50%) scale(0.85); }
+.dot-3 { transition: left 0.12s ease-out, top 0.12s ease-out; opacity: 0.7; transform: translate(-50%, -50%) scale(0.7); }
+.dot-4 { transition: left 0.16s ease-out, top 0.16s ease-out; opacity: 0.45; transform: translate(-50%, -50%) scale(0.55); }
+.dot-5 { transition: left 0.2s ease-out, top 0.2s ease-out; opacity: 0.2; transform: translate(-50%, -50%) scale(0.4); }

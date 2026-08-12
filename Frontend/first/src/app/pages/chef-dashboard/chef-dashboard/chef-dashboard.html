@@ -1,0 +1,156 @@
+<div class="chef-container">
+  
+  <div class="chef-header">
+    <div>
+      <h2>👨‍🍳 Kitchen Raw Stock & Ingredients</h2>
+      <p>Log kitchen stock entries and track live updates by Chef.</p>
+    </div>
+    <div class="header-right">
+      <span class="chef-badge">👨‍🍳 Active Chef: <strong>{{ currentChefName }}</strong> ({{ currentChefId }})</span>
+      <button class="add-btn" (click)="showAddModal = true">
+        ➕ Add Ingredient
+      </button>
+    </div>
+  </div>
+
+  <!-- Low Stock Alert Banner -->
+  <div *ngIf="lowStockItems.length > 0" class="alert-banner">
+    ⚠️ <strong>LOW STOCK ALERT:</strong> 
+    <span>{{ lowStockItems.length }} ingredient(s) running low!</span>
+  </div>
+
+  <!-- Search Filter -->
+  <div class="search-bar-box">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="🔍 Search ingredients..." />
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state" style="text-align: center; padding: 30px;">
+    <p>🔄 Fetching raw kitchen stock from API...</p>
+  </div>
+
+  <!-- 📊 RAW INGREDIENTS TABLE -->
+  <div class="table-wrapper" *ngIf="!isLoading && filteredIngredients.length > 0">
+    <table class="inventory-table">
+      <thead>
+        <tr>
+          <th>Ingredient Name</th>
+          <th>Stock Quantity</th>
+          <th>Min Threshold Alert</th>
+          <th>Stock Status</th>
+          <th>Updated By</th>
+          <th style="min-width: 220px;">Quantity Action</th>
+          <th style="min-width: 200px; background-color: #f8fafc;">Required Item (Admin Request)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredIngredients">
+          <td class="font-bold">{{ item.displayName || item.ingredient_name }}</td>
+          <td>
+            <span class="qty-text">{{ item.quantity }} {{ item.unit }}</span>
+          </td>
+
+          <td>{{ item.minimum_stock_alert }} {{ item.unit }}</td>
+
+          <td>
+            <span class="badge" [ngClass]="{
+              'out': item.status === 'Out of Stock',
+              'low': item.status === 'Low Stock',
+              'ok': item.status === 'In Stock'
+            }">
+              {{ item.status }}
+            </span>
+          </td>
+
+          <td>
+            <span class="updated-by-text">{{ item.user || currentChefName }}</span>
+          </td>
+
+          <td>
+            <div class="bulk-qty-box">
+              <input 
+                type="number" 
+                class="qty-input" 
+                [(ngModel)]="item.temp_adjust_qty" 
+                placeholder="0" 
+                min="1"
+              />
+              <!-- <button class="action-btn add" (click)="updateBulkStock(item, 'ADD')">
+                + Add
+              </button> -->
+              <button class="action-btn remove" (click)="updateBulkStock(item, 'REMOVE')">
+                - Deduct
+              </button>
+            </div>
+          </td>
+
+          <!-- 🎯 REQUIRED ITEM (ADMIN REQUEST) SECTION FIXED -->
+          <td style="background-color: #f8fafc;">
+            <!-- Pending State -->
+            <div *ngIf="item.request_to_admin === 'Pending'" style="color: #d97706; font-weight: bold;">
+              ⏳ Pending ({{ item.request_item }} {{ item.unit }})
+            </div>
+
+            <!-- Normal State (Input Box) -->
+            <div *ngIf="item.request_to_admin !== 'Pending'" class="bulk-qty-box" style="justify-content: flex-start;">
+              <input 
+                type="number" 
+                class="qty-input" 
+                [(ngModel)]="item.request_qty" 
+                placeholder="Qty" 
+                min="1"
+              />
+              <button class="action-btn" style="background-color: #3b82f6; color: white; border: none;" (click)="sendRestockRequest(item)">
+                📩 Request
+              </button>
+            </div>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && filteredIngredients.length === 0" class="empty-state" style="text-align: center; padding: 40px; color: #64748B;">
+    <p style="font-size: 1.1rem; font-weight: 600;">No ingredients found. Click "Add Ingredient" to create entries.</p>
+  </div>
+
+  <!-- 🎯 ADD INGREDIENT MODAL -->
+  <div *ngIf="showAddModal" class="modal-overlay">
+    <div class="modal-card">
+      <h3>➕ Add Kitchen Ingredient</h3>
+      
+      <div class="form-group">
+        <label>Ingredient Name</label>
+        <input type="text" [(ngModel)]="newItem.ingredient_name" placeholder="Enter ingredient name (e.g. Rice, Salt)..." />
+      </div>
+
+      <div class="form-group-row">
+        <div>
+          <label>Initial Quantity</label>
+          <input type="number" [(ngModel)]="newItem.quantity" min="1" />
+        </div>
+        <div>
+          <label>Unit</label>
+          <select [(ngModel)]="newItem.unit">
+            <option value="kg">kg</option>
+            <option value="grams">grams</option>
+            <option value="liters">liters</option>
+            <option value="packets">packets</option>
+            <option value="pcs">pcs</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Minimum Stock Threshold Alert</label>
+        <input type="number" [(ngModel)]="newItem.minimum_stock_alert" placeholder="e.g. 2" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel-btn" (click)="showAddModal = false">Cancel</button>
+        <button class="save-btn" (click)="addKitchenItem()">Save Ingredient</button>
+      </div>
+    </div>
+  </div>
+
+</div>

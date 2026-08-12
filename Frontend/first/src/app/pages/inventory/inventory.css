@@ -1,0 +1,301 @@
+.inventory-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  box-sizing: border-box;
+}
+
+.inventory-header {
+  margin-bottom: 2rem;
+}
+
+.inventory-header h2 {
+  font-size: 2.2rem;
+  color: #ed0c53;
+  margin: 0 0 8px 0;
+  font-weight: 800;
+}
+
+.inventory-header p {
+  color: #10dfe1;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2.5rem;
+}
+
+@media (max-width: 1024px) {
+  .inventory-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Stock Table Card */
+.stock-table-card, .add-stock-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05);
+  border: 1px solid #F1F5F9;
+}
+
+.stock-table-card h3, .add-stock-card h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.4rem;
+  color: #0F172A;
+  font-weight: 800;
+  border-bottom: 2px solid #F1F5F9;
+  padding-bottom: 12px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th {
+  color: #64748B;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 16px;
+  border-bottom: 2px solid #F1F5F9;
+}
+
+td {
+  padding: 16px;
+  color: #0F172A;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 0.95rem;
+}
+
+.cat-badge {
+  background: #F1F5F9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.stock-indicator {
+  font-weight: 700;
+  color: #059669;
+}
+
+.stock-indicator.low-stock {
+  color: #E11D48;
+}
+
+.stock-indicator small {
+  font-size: 0.75rem;
+  display: block;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.stock-btn {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stock-btn:hover {
+  background: #0F172A;
+  color: #FFFFFF;
+  border-color: #0F172A;
+}
+
+.delete-btn {
+  background: #FFF1F2;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.delete-btn:hover {
+  background: #E11D48;
+}
+
+/* ==========================================
+   📝 FORM GROUP INPUT & TYPING FIXES
+   ========================================== */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+/* Base style for form inputs, table inline inputs, and dropdowns */
+.form-group input, 
+.form-group select,
+table td input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #CBD5E1;
+  border-radius: 12px;
+  background-color: #F8FAFC !important;
+  color: #0F172A !important; /* 👈 Typed text will always remain crisp dark slate */
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Active focus state when typing */
+.form-group input:focus, 
+.form-group select:focus,
+table td input:focus {
+  border-color: #E11D48 !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1);
+}
+
+/* Placeholder Styling */
+.form-group input::placeholder {
+  color: #64748B !important; /* Professional Muted Slate Placeholder */
+  opacity: 0.85;
+  font-weight: 400;
+}
+
+/* Chrome/Safari Autofill Background Override */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0F172A !important;
+  -webkit-box-shadow: 0 0 0px 1000px #FFFFFF inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.submit-btn {
+  width: 100%;
+  background: #E11D48;
+  color: #FFFFFF;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.4);
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #BE123C;
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   📱 RESPONSIVE FIXES FOR INVENTORY PAGE
+   ========================================== */
+@media (max-width: 1024px) {
+  .inventory-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .inventory-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .stock-table-card, .add-stock-card {
+    width: 100% !important;
+    padding: 1rem !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .table-responsive {
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100% !important;
+  }
+
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr {
+    margin-bottom: 1rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 10px;
+    background: #F8FAFC;
+  }
+
+  td {
+    border: none !important;
+    position: relative;
+    padding: 6px 0 6px 38% !important;
+    text-align: right !important;
+    font-size: 0.9rem;
+  }
+
+  td:nth-of-type(1):before { content: "Item Name: "; }
+  td:nth-of-type(2):before { content: "Category: "; }
+  td:nth-of-type(3):before { content: "Price: "; }
+  td:nth-of-type(4):before { content: "Stock: "; }
+  td:nth-of-type(5):before { content: "Actions: "; }
+
+  td:before {
+    position: absolute;
+    left: 0;
+    width: 35%;
+    white-space: nowrap;
+    font-weight: 700;
+    color: #64748B;
+    text-align: left;
+  }
+
+  .action-buttons {
+    justify-content: flex-end;
+  }
+
+  .inventory-header h2 {
+    font-size: 1.75rem !important;
+  }
+}

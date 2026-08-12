@@ -1,0 +1,210 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-top: 4px;
+  font-size: 0.95rem;
+}
+
+/* Stats Cards Grid */
+.stats-grid {
+  display: flex;
+  flex-wrap: nowrap; /* Cards ko next line me jaane se rokega */
+  overflow-x: auto; /* Agar screen choti hogi toh horizontal scrollbar aa jayega */
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 10px; /* Scrollbar ke liye thodi space */
+}
+
+/* Optional: Har card ki minimum width fix karne ke liye */
+.stats-grid > div {
+  flex: 1 1 0;
+  min-width: 200px; /* Card isse chhota nahi hoga */
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.stat-info span {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-info h3 {
+  margin: 4px 0;
+  font-size: 1.6rem;
+  color: #0f172a;
+}
+
+.trend.positive { color: #16a34a; font-weight: 600; font-size: 0.8rem; }
+.trend.neutral { color: #0284c7; font-weight: 600; font-size: 0.8rem; }
+
+/* 🌟 Redesigned Analytics Card & Table */
+.analytics-card {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-header h3 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.25rem;
+}
+
+.live-indicator {
+  color: #22c55e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.analytics-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  text-align: left;
+}
+
+.analytics-table th {
+  padding: 12px 18px;
+  color: #fdfdfd;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+}
+
+.analytics-table tbody tr {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 10px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.analytics-table tbody tr:hover {
+  background: rgba(30, 41, 59, 0.8);
+  transform: translateY(-2px);
+}
+
+.analytics-table td {
+  padding: 16px 18px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  border: none;
+}
+
+.analytics-table td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.analytics-table td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.order-id {
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.customer-name {
+  font-weight: 500;
+}
+
+.amount {
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.order-date {
+  color: #94a3b8;
+  font-size: 0.88rem;
+}
+
+/* Badges */
+.badge-status {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.badge-status.completed { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.badge-status.preparing { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-status.out-for-delivery { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+.badge-status.pending { background: rgba(225, 29, 72, 0.2); color: #fb7185; border: 1px solid rgba(225, 29, 72, 0.3); }
+
+.logout-btn {
+  background: #e11d48;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #be123c;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

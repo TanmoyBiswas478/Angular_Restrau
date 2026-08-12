@@ -1,0 +1,73 @@
+<!-- Hamburger Button -->
+<button class="menu-btn" (click)="toggleSidebar()">
+  ☰ Menu
+</button>
+
+<!-- Sidebar Container -->
+<div class="sidebar" [class.open]="isOpen">
+  
+  <!-- Top Section: App Name with Smart Route Binding -->
+  <div class="sidebar-header" *ngIf="authService.currentUser$ | async as user; else guestHeader">
+    <h2 [routerLink]="user.role?.toLowerCase() === 'admin' ? '/admin/dashboard' : '/home'" (click)="toggleSidebar()" style="cursor: pointer;">
+      🍔 YUMMMY 😋
+    </h2>
+    <button class="close-btn" (click)="toggleSidebar()">×</button>
+  </div>
+
+  <ng-template #guestHeader>
+    <div class="sidebar-header">
+      <h2 routerLink="/home" (click)="toggleSidebar()" style="cursor: pointer;">🍔 YUMMMY 😋</h2>
+      <button class="close-btn" (click)="toggleSidebar()">×</button>
+    </div>
+  </ng-template>
+
+  <!-- Logged-In User View -->
+  <div class="nav-links" *ngIf="authService.currentUser$ | async as user; else loggedOut">
+    
+    <!-- User Profile Details -->
+    <div class="user-profile">
+      <p>Welcome, {{ user.name }}</p>
+      <span class="badge">{{ user.role | uppercase }}</span>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <div style="padding: 12px 25px 5px 25px;">
+      <button class="theme-toggle-btn" (click)="toggleTheme()" style="width: 100%;">
+        {{ isDarkMode ? '☀️ Switch to Light Mode' : '🌙 Switch to Dark Mode' }}
+      </button>
+    </div>
+
+    <!-- Role-Based Dynamic Links (Admin won't see Home here) -->
+    <ng-container *ngFor="let link of getAllowedLinks(user.role)">
+      <a [routerLink]="link.path" (click)="toggleSidebar()">{{ link.label }}</a>
+    </ng-container>
+
+    <!-- Logout Button -->
+    <a class="logout-btn" (click)="logout()">Logout</a>
+  </div>
+
+  <!-- Guest / Logged Out View -->
+  <ng-template #loggedOut>
+    <div class="nav-links">
+      
+      <div style="padding: 12px 25px 15px 25px;">
+        <button class="theme-toggle-btn" (click)="toggleTheme()" style="width: 100%;">
+          {{ isDarkMode ? '☀️ Switch to Light Mode' : '🌙 Switch to Dark Mode' }}
+        </button>
+      </div>
+
+      <a routerLink="/home" (click)="toggleSidebar()">Home</a>
+      <a routerLink="/login" (click)="toggleSidebar()">Customer & Staff Login</a>
+      <a routerLink="/register" (click)="toggleSidebar()">Register</a>
+
+      <!-- Super Admin Dedicated Portal Link -->
+      <a routerLink="/admin/login" (click)="toggleSidebar()" style="color: #e11d48; font-weight: bold; border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 12px;">
+        👑 Admin Portal
+      </a>
+    </div>
+  </ng-template>
+
+</div>
+
+<!-- Overlay -->
+<div class="overlay" *ngIf="isOpen" (click)="toggleSidebar()"></div>
