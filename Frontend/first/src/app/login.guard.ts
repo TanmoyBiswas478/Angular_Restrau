@@ -1,13 +1,20 @@
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './services/auth';
+import { isPlatformBrowser } from '@angular/common';
 
 export const loginGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
 
-  // Agar user pehle se logged-in hai, toh login page mat kholne do, seedha dashboard bhejo
-  if (authService.currentUserValue || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('currentUser'))) {
+  // 🛑 SSR Bypass: Agar server par hai, toh koi redirection mat maaro
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  // Agar user pehle se logged-in hai (Browser environment me)
+  if (authService.currentUserValue || sessionStorage.getItem('currentUser')) {
     const user = authService.currentUserValue || JSON.parse(sessionStorage.getItem('currentUser') || '{}');
     const role = user?.role ? user.role.toLowerCase() : '';
 

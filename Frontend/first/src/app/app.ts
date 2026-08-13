@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener, PLATFORM_ID, inject } from '@angular/c
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar';
-import { AuthService } from './services/auth'; // 👈 AuthService import kiya
+import { AuthService } from './services/auth'; 
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ import { AuthService } from './services/auth'; // 👈 AuthService import kiya
 })
 export class AppComponent implements OnInit {
   platformId = inject(PLATFORM_ID);
-  private authService = inject(AuthService); // 👈 AuthService inject kiya
+  private authService = inject(AuthService);
   
   isSidebarOpen = false;
   isHeaderHidden = false;
@@ -27,13 +27,14 @@ export class AppComponent implements OnInit {
       this.isDarkMode = savedTheme ? savedTheme === 'dark' : false;
       this.applyTheme();
 
-      // 🛡️ Forcefully check and sync session storage on every app load / refresh
+      // 🛡️ CRITICAL FIX: Refresh hone par session turant restore karo taaki guard fail na ho
       const savedUser = sessionStorage.getItem('currentUser');
       if (savedUser && !this.authService.currentUserValue) {
-        // Agar sessionStorage me hai par service value null ho gayi hai, toh turant wapas inject karo
         try {
           const userObj = JSON.parse(savedUser);
-          // AuthService ki state force update karne ke liye agar zaroorat ho
+          if (userObj) {
+            this.authService.restoreSession(userObj); // 👈 State sync restored
+          }
         } catch (e) {
           console.error('Session sync error:', e);
         }
@@ -47,7 +48,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // 🌟 Toggle Function (Navbar Button Se Call Hoga)
+  // 🌟 Toggle Function
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
     if (isPlatformBrowser(this.platformId)) {

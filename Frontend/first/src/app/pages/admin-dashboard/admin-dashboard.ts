@@ -2,7 +2,6 @@ import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID } from '@angu
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../services/auth';
-import { EmployeeService, Employee } from '../../services/employee';
 
 export interface DashboardAnalytics {
   totalRevenue: number;
@@ -23,7 +22,6 @@ export interface DashboardAnalytics {
 })
 export class AdminDashboardComponent implements OnInit {
   private http = inject(HttpClient);
-  private employeeService = inject(EmployeeService);
   private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
   authService = inject(AuthService);
@@ -43,48 +41,59 @@ export class AdminDashboardComponent implements OnInit {
 
   restockRequests: any[] = [];
 
-// 🎯 Sahi endpoint point karwa diya jo saara calculated data dega
   private deliveryApiUrl = 'http://192.168.1.117:1234/api/dashboard/analytics';
   private customerApiUrl = 'http://192.168.1.117:1234/api/customers'; 
   private kitchenApiUrl = 'http://192.168.1.117:1234/api/kitchenstocks';
+  private employeeApiUrl = 'http://192.168.1.117:1234/api/employees';
 
-  private ngrokHeaders = new HttpHeaders({
-    'ngrok-skip-browser-warning': 'true',
-    'Accept': 'application/json'
-  });
+  // 🎯 Strong Dynamic Header Generator
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true',
+      'Accept': 'application/json'
+    });
+
+    if (isPlatformBrowser(this.platformId)) {
+      const token = sessionStorage.getItem('authToken');
+      if (token) {
+        headers = headers.set('Authorization', `Bearer ${token}`);
+      }
+    }
+    return headers;
+  }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.fetchAnalytics();
-      this.fetchTotalEmployees();
-      this.fetchTotalCustomers();
-      this.fetchRestockRequests();
+      // Direct load to eliminate delay flickering
+      this.loadAllDashboardData();
     }
   }
 
-  fetchAnalytics() {
+  loadAllDashboardData() {
     this.isLoading = true;
+    this.fetchAnalytics();
+    this.fetchTotalEmployees();
+    this.fetchTotalCustomers();
+    this.fetchRestockRequests();
+  }
 
-    this.http.get<any>(this.deliveryApiUrl, { headers: this.ngrokHeaders }).subscribe({
+  fetchAnalytics() {
+    this.http.get<any>(this.deliveryApiUrl, { headers: this.getHeaders() }).subscribe({
       next: (res) => {
         console.log('👑 Admin Analytics Response:', res);
-
         if (res) {
-          // Calculate today's revenue or fallback
           const recent = res.recentOrders || [];
-          
           this.analytics = {
             ...this.analytics,
             totalRevenue: Number(res.totalRevenue || 0),
-            todaysRevenue: Number(res.todaysRevenue || 0), // 👈 Today's revenue mapped here
+            todaysRevenue: Number(res.todaysRevenue || 0),
             totalOrders: Number(res.totalOrders || 0),
-            todaysOrders: Number(res.todaysOrders || 0),   // 👈 Today's orders mapped here
-            activeCustomers: Number(res.activeCustomers || 0),
-            totalStaff: Number(res.totalStaff || 0),
+            todaysOrders: Number(res.todaysOrders || 0),
+            activeCustomers: Number(res.activeCustomers || res.totalCustomers || this.analytics.activeCustomers),
+            totalStaff: Number(res.totalStaff || this.analytics.totalStaff),
             recentOrders: recent
           };
         }
-        
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -97,25 +106,24 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   fetchTotalEmployees() {
-    this.employeeService.getEmployees().subscribe({
-      next: (employees: Employee[]) => {
-        if (employees && Array.isArray(employees)) {
-          this.totalEmployees = employees.length;
-          this.analytics = {
-            ...this.analytics,
-            totalStaff: employees.length
-          };
-          this.cdr.detectChanges();
-        }
+    // Direct HTTP call with Auth token headers to avoid EmployeeService token drops
+    this.http.get<any>(this.employeeApiUrl, { headers: this.getHeaders() }).subscribe({
+      next: (res: any) => {
+        const employeesList = Array.isArray(res) ? res : (res?.data || res?.employees || []);
+        const count = employeesList.length || 0;
+        this.totalEmployees = count;
+        this.analytics.totalStaff = count;
+        this.cdr.detectChanges();
       },
-      error: () => {
-        this.totalEmployees = 0;
+      error: (err) => {
+        console.error('❌ Employee fetch error:', err);
+        this.cdr.detectChanges();
       }
     });
   }
 
   fetchTotalCustomers() {
-    this.http.get<any>(this.customerApiUrl, { headers: this.ngrokHeaders }).subscribe({
+    this.http.get<any>(this.customerApiUrl, { headers: this.getHeaders() }).subscribe({
       next: (res) => {
         let count = 0;
         if (Array.isArray(res)) {
@@ -125,13 +133,11 @@ export class AdminDashboardComponent implements OnInit {
           count = Array.isArray(list) ? list.length : (res.count || res.total || 0);
         }
 
-        this.analytics = {
-          ...this.analytics,
-          activeCustomers: count
-        };
+        this.analytics.activeCustomers = count;
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('❌ Customer fetch error:', err);
         this.cdr.detectChanges();
       }
     });
@@ -140,7 +146,7 @@ export class AdminDashboardComponent implements OnInit {
   fetchRestockRequests() {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    this.http.get<any>(this.kitchenApiUrl, { headers: this.ngrokHeaders }).subscribe({
+    this.http.get<any>(this.kitchenApiUrl, { headers: this.getHeaders() }).subscribe({
       next: (res) => {
         const rawList = Array.isArray(res) ? res : (res?.data || res?.items || []);
         this.restockRequests = rawList.filter((item: any) => {
@@ -173,7 +179,7 @@ export class AdminDashboardComponent implements OnInit {
       user: String(item.user || 'Chef')
     };
 
-    this.http.put(`${this.kitchenApiUrl}/${item.id}`, payload, { headers: this.ngrokHeaders }).subscribe({
+    this.http.put(`${this.kitchenApiUrl}/${item.id}`, payload, { headers: this.getHeaders() }).subscribe({
       next: () => {
         alert(`✅ Approved! ${item.ingredient_name} updated by +${requestedQty} ${item.unit}.`);
         this.fetchRestockRequests();
@@ -201,7 +207,7 @@ export class AdminDashboardComponent implements OnInit {
       user: String(item.user || 'Chef')
     };
 
-    this.http.put(`${this.kitchenApiUrl}/${item.id}`, payload, { headers: this.ngrokHeaders }).subscribe({
+    this.http.put(`${this.kitchenApiUrl}/${item.id}`, payload, { headers: this.getHeaders() }).subscribe({
       next: () => {
         alert(`❌ Request Rejected for ${item.ingredient_name}.`);
         this.fetchRestockRequests(); 
