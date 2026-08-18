@@ -30,7 +30,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (emp of employees; track emp.id) {
+              @for (emp of employees; track $index) {
                 <tr [class.editing-row]="editingEmployeeId === emp.id">
                   <td>
                     <div class="staff-profile">
@@ -79,8 +79,11 @@
                       </button>
                       <button
                         class="delete-btn"
-                        (click)="deleteEmployee(emp.id)"
-                        title="Delete Staff"
+                        [disabled]="emp.role === 'Admin'"
+                        [style.opacity]="emp.role === 'Admin' ? '0.4' : '1'"
+                        [style.cursor]="emp.role === 'Admin' ? 'not-allowed' : 'pointer'"
+                        (click)="deleteEmployee(emp)"
+                        [title]="emp.role === 'Admin' ? 'Admin cannot be deleted' : 'Delete Staff'"
                       >
                         🗑️
                       </button>
@@ -111,7 +114,13 @@
         <small
           *ngIf="nameError"
           class="error-msg"
-          style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;"
+          style="
+            color: #e11d48;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 4px;
+            display: block;
+          "
         >
           {{ nameError }}
         </small>
@@ -154,7 +163,13 @@
         <small
           *ngIf="emailError"
           class="error-msg"
-          style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;"
+          style="
+            color: #e11d48;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 4px;
+            display: block;
+          "
         >
           {{ emailError }}
         </small>
@@ -183,7 +198,13 @@
         <small
           *ngIf="phoneError"
           class="error-msg"
-          style="color: #e11d48; font-size: 0.8rem; font-weight: 600; margin-top: 4px; display: block;"
+          style="
+            color: #e11d48;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 4px;
+            display: block;
+          "
         >
           {{ phoneError }}
         </small>

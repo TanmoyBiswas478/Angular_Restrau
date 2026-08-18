@@ -45,7 +45,7 @@ export class ChefDashboardComponent implements OnInit {
   }
 
   private extractChefDetails() {
-    const stored = localStorage.getItem('currentUser');
+    const stored = sessionStorage.getItem('currentUser');
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
