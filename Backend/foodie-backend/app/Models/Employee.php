@@ -20,10 +20,6 @@ class Employee extends Model
         'avatar_url',
         'status',
     ];
-    protected $hidden = [
-        'id',
-        'eid',
-        'email',
-        'phone',
-    ];
+
+   
 }
