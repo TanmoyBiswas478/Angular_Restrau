@@ -42,17 +42,24 @@ export class LoginComponent implements OnInit {
       if (userRole === 'admin') {
         this.router.navigate(['/admin/dashboard']);
         return;
-      } else if (userRole.includes('manager') || userRole.includes('delivery')) {
-        this.router.navigate(['/dashboard']);
-        return;
-      } else {
-        this.router.navigate(['/home']);
-        return;
       }
+
+      this.router.navigate([this.routeForRole(userRole)]);
+      return;
     }
 
     // Agar user logged-in nahi hai, tabhi checking off karke form dikhao
     this.isChecking = false;
+  }
+
+  // 🎯 Har role ko uske sahi portal par bhejne wali central logic
+  private routeForRole(userRole: string): string {
+    const r = (userRole || '').toLowerCase();
+    if (r.includes('delivery') || r.includes('rider')) return '/delivery/dashboard';
+    if (r.includes('assistant')) return '/kitchen-assistant/dashboard'; // Chef se pehle
+    if (r.includes('chef') || r.includes('kitchen')) return '/chef/dashboard';
+    if (r.includes('manager') || r.includes('manage')) return '/store-manager/dashboard';
+    return '/home'; // Customer & fallback
   }
 
   onLogin() {
@@ -83,12 +90,8 @@ export class LoginComponent implements OnInit {
         }
 
         alert(`🎉 Welcome back, ${user?.name || 'User'}! Login Successful.`);
-        
-        if (userRole.includes('manager') || userRole.includes('delivery')) {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.router.navigate(['/home']);
-        }
+
+        this.router.navigate([this.routeForRole(userRole)]);
       },
       error: (err: any) => {
         this.isLoading = false;

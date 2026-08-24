@@ -63,6 +63,9 @@ export class NavbarComponent implements OnInit {
     // 🎯 ROLE NORMALIZER
     if (formattedRole === 'customer' || formattedRole === 'user') {
       formattedRole = 'customer';
+    } else if (formattedRole.includes('assistant')) {
+      // ⚠️ Kitchen Assistant ko Chef se PEHLE check karo (warna 'kitchen' match ho jata tha)
+      formattedRole = 'kitchen-assistant';
     } else if (formattedRole.includes('chef') || formattedRole.includes('kitchen')) {
       formattedRole = 'chef';
     } else if (formattedRole.includes('deliver') || formattedRole.includes('rider')) {
@@ -80,6 +83,32 @@ export class NavbarComponent implements OnInit {
         { label: '🍔 Order Food', path: '/dashboard' },
         { label: '🛍️ My Orders', path: '/my-orders' },
         { label: '👤 Profile', path: '/profile' }
+      ];
+    }
+
+    // 🚚 DELIVERY EXECUTIVE — fixed links (menu config par depend nahi karta)
+    if (formattedRole === 'delivery') {
+      return [
+        { label: '🏠 Home', path: '/home' },
+        { label: '🚚 My Deliveries', path: '/delivery/dashboard' }
+      ];
+    }
+
+    // 🏪 STORE MANAGER — fixed links
+    if (formattedRole === 'manager') {
+      return [
+        { label: '🏪 Dashboard', path: '/store-manager/dashboard' },
+        { label: '📦 Inventory', path: '/inventory' },
+        { label: '👥 Staff', path: '/employees' },
+        { label: '🚚 Deliveries', path: '/deliveries' }
+      ];
+    }
+
+    // 🧑‍🍳 KITCHEN ASSISTANT — fixed links
+    if (formattedRole === 'kitchen-assistant') {
+      return [
+        { label: '🏠 Home', path: '/home' },
+        { label: '🧑‍🍳 Kitchen Stock', path: '/kitchen-assistant/dashboard' }
       ];
     }
 

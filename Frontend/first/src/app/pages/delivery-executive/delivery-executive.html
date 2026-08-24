@@ -1,0 +1,160 @@
+<div class="portal-container">
+
+  <!-- HEADER -->
+  <div class="portal-header">
+    <div>
+      <h2>🚚 Delivery Partner Console</h2>
+      <p>Accept nearby orders, deliver to the customer's address, and track your runs live.</p>
+    </div>
+    <div class="header-right">
+      <span class="partner-badge">🧑‍✈️ <strong>{{ currentName }}</strong> ({{ currentEid }})</span>
+
+      <!-- Availability toggle -->
+      <button
+        class="avail-toggle"
+        [class.online]="availability === 'Online'"
+        [class.offline]="availability === 'Offline'"
+        (click)="toggleAvailability()">
+        <span class="dot"></span>
+        {{ availability === 'Online' ? 'Online' : 'Offline' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <span class="stat-label">Active Runs</span>
+      <span class="stat-value">{{ activeCount }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Delivered</span>
+      <span class="stat-value">{{ deliveredCount }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Available to Pick</span>
+      <span class="stat-value">{{ availableCount }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Status</span>
+      <span class="stat-value" [style.color]="availability === 'Online' ? '#059669' : '#94a3b8'">
+        {{ availability }}
+      </span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button [class.active]="activeTab === 'assigned'" (click)="activeTab = 'assigned'">
+      📋 My Deliveries ({{ assigned.length }})
+    </button>
+    <button [class.active]="activeTab === 'available'" (click)="activeTab = 'available'">
+      🆕 Available Orders ({{ available.length }})
+    </button>
+    <button class="refresh-btn" (click)="loadAll()">🔄 Refresh</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">🔄 Loading deliveries...</div>
+
+  <!-- ═══════════ MY ASSIGNED DELIVERIES ═══════════ -->
+  <div *ngIf="activeTab === 'assigned'">
+    <div class="table-wrapper" *ngIf="assigned.length > 0; else noAssigned">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Delivery Address</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th style="min-width: 230px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of assigned; trackBy: trackById">
+            <td class="font-bold">{{ o.order_number || ('#' + o.id) }}</td>
+            <td>{{ o.customer_name || 'Customer' }}</td>
+            <td class="addr">📍 {{ o.delivery_address || '—' }}</td>
+            <td class="items">{{ o.items || '—' }}</td>
+            <td class="font-bold">₹{{ o.total || 0 }}</td>
+            <td>
+              <span class="badge" [ngClass]="statusClass(o.status)">{{ o.status }}</span>
+            </td>
+            <td>
+              <div class="action-row">
+                <button
+                  *ngIf="o.status !== 'Out for Delivery' && o.status !== 'Delivered'"
+                  class="act-btn blue"
+                  [disabled]="o._busy"
+                  (click)="updateStatus(o, 'Out for Delivery')">
+                  🚀 Start
+                </button>
+                <button
+                  *ngIf="o.status !== 'Delivered'"
+                  class="act-btn green"
+                  [disabled]="o._busy"
+                  (click)="updateStatus(o, 'Delivered')">
+                  ✅ Delivered
+                </button>
+                <span *ngIf="o.status === 'Delivered'" class="done-text">Completed</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noAssigned>
+      <div class="empty-state" *ngIf="!isLoading">
+        <p>No deliveries assigned yet. Check the <strong>Available Orders</strong> tab to pick one up.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- ═══════════ AVAILABLE ORDERS ═══════════ -->
+  <div *ngIf="activeTab === 'available'">
+    <div class="offline-hint" *ngIf="availability !== 'Online'">
+      🔴 You're <strong>Offline</strong> — go Online (top-right) to accept orders.
+    </div>
+
+    <div class="table-wrapper" *ngIf="available.length > 0; else noAvailable">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Delivery Address</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th style="min-width: 150px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of available; trackBy: trackById">
+            <td class="font-bold">{{ o.order_number || ('#' + o.id) }}</td>
+            <td>{{ o.customer_name || 'Customer' }}</td>
+            <td class="addr">📍 {{ o.delivery_address || '—' }}</td>
+            <td class="items">{{ o.items || '—' }}</td>
+            <td class="font-bold">₹{{ o.total || 0 }}</td>
+            <td><span class="badge" [ngClass]="statusClass(o.status)">{{ o.status }}</span></td>
+            <td>
+              <button
+                class="act-btn accept"
+                [disabled]="o._busy || availability !== 'Online'"
+                (click)="acceptOrder(o)">
+                📦 Accept
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noAvailable>
+      <div class="empty-state" *ngIf="!isLoading">
+        <p>No unassigned orders right now. New orders will appear here as customers check out.</p>
+      </div>
+    </ng-template>
+  </div>
+
+</div>
