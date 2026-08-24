@@ -73,7 +73,7 @@ export class NavbarComponent implements OnInit {
       formattedRole = 'admin';
     }
 
-    // 🚀 CUSTOMER BYPASS: Customer login karte hi directly fix links dikhenge
+    // CUSTOMER BYPASS: Customer login karte hi directly fix links dikhenge
     if (formattedRole === 'customer') {
       return [
         { label: '🏠 Home', path: '/home' },

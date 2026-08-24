@@ -39,30 +39,16 @@ class LoginController extends Controller
                 ], 401);
             }
 
-            // // Fetch related customer details
-            if ($user->role === 'Admin') {
-
-                $employee = Employee::where('email', $user->email)->first();
-
-                if (!$employee) {
-                    return response()->json([
-                        'message' => 'Employee details not found.'
-                    ], 404);
-                }
-
-                return response()->json([
-                    'message' => 'Login successful',
-                    'user' => [
-                        'id' => $user->id,
-                        'eid' => $user->eid,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'role' => $user->role,
-                        'phone' => $employee->phone,
-                    ]
-                ], 200);
-
-            } elseif ($user->role === 'Customer') {
+            // ────────────────────────────────────────────────────────────────
+            // 🎯 ROLE ROUTING
+            //   • Customer  -> profile lives in `customers` table
+            //   • Everyone else (Admin, Chef, Store Manager, Delivery Executive,
+            //     Kitchen Assistant) is STAFF -> profile lives in `employees` table
+            //
+            // Pehle sirf Admin/Customer/Chef allowed the, isliye 3 naye roles ko
+            // 403 "Invalid user role" milta tha. Ab har staff role login kar sakta hai.
+            // ────────────────────────────────────────────────────────────────
+            if ($user->role === 'Customer') {
 
                 $customer = Customer::where('customer_email', $user->email)->first();
 
@@ -81,37 +67,36 @@ class LoginController extends Controller
                         'email' => $user->email,
                         'role' => $user->role,
                         'phone' => $customer->phone,
+                        'address' => $customer->address,
+                        'membership' => $customer->membership,
                     ]
                 ], 200);
-
             }
-            elseif ($user->role === 'Chef') {
 
-                $employee = Employee::where('email', $user->email)->first();
+            // 👨‍🍳🚚🏪🧑‍🍳👑  ALL STAFF ROLES
+            $employee = Employee::where('email', $user->email)->first();
 
-                if (!$employee) {
-                    return response()->json([
-                        'message' => 'Employee details not found.'
-                    ], 404);
-                }
-
+            if (!$employee) {
                 return response()->json([
-                    'message' => 'Login successful',
-                    'user' => [
-                        'id' => $user->id,
-                        'eid' => $user->eid,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'role' => $user->role,
-                        'phone' => $employee->phone,
-                    ]
-                ], 200);
-
+                    'message' => 'Employee details not found.'
+                ], 404);
             }
 
             return response()->json([
-                'message' => 'Invalid user role.'
-            ], 403);
+                'message' => 'Login successful',
+                'user' => [
+                    'id' => $user->id,
+                    'eid' => $user->eid ?? $employee->eid,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'phone' => $employee->phone,
+                    'status' => $employee->status,
+                    'availability' => $employee->availability ?? 'Offline', // 🚚 Delivery Executive toggle
+                    'store_id' => $employee->store_id,                       // 🏪 Store Manager branch
+                    'avatar_url' => $employee->avatar_url,
+                ]
+            ], 200);
 
         } catch (ValidationException $e) {
             return response()->json([

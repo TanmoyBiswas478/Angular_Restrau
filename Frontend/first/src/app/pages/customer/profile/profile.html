@@ -14,14 +14,14 @@
       <h3>Passport Photograph</h3>
 
       <div class="avatar-preview-box">
-        <img [src]="previewAvatar || 'assets/default-avatar.png'" alt="User Avatar" class="avatar-img" />
+        <img [src]="previewAvatar || 'assets/default-avatar.png'" (error)="onAvatarError($event)" alt="User Avatar" class="avatar-img" />
       </div>
 
       <div class="upload-controls">
         <label for="photoInput" class="upload-btn"> 📷 Upload New Photo </label>
         <input id="photoInput" type="file" accept="image/png, image/jpeg, image/jpg" (change)="onFileSelected($event)"
           hidden />
-        <span class="file-note">⚠️ Must be Passport Size & Under 10240KB</span>
+        <span class="file-note">⚠️ Must be Passport Size & Under 1MB</span>
       </div>
     </div>
 

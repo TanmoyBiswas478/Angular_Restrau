@@ -19,12 +19,17 @@ export interface UserProfile {
 })
 export class ProfileService {
   private http = inject(HttpClient);
-  
+
   // 👇 1. Aapka Local Backend IP
   private baseUrl = 'http://192.168.1.117:1234/api';
-  
+
   // 👇 2. Customers API URL (Pehle /profile tha, ab /customers hai)
   private apiUrl = `${this.baseUrl}/customers`;
+
+  // 👇 3. Backend ORIGIN (without /api). Laravel serves uploaded files from
+  //    http://192.168.1.117:1234/storage/... (via the public/storage symlink),
+  //    NOT from under /api and NOT from the Angular dev server on :4200.
+  private serverOrigin = this.baseUrl.replace(/\/api\/?$/, '');
 
   private ngrokHeaders = new HttpHeaders({
     'ngrok-skip-browser-warning': 'true',
@@ -52,7 +57,7 @@ updateProfile(id: string | number, data: Partial<UserProfile>): Observable<any> 
     const headers = new HttpHeaders({
       'ngrok-skip-browser-warning': 'true'
     });
-    // 👇 3. Exact Upload API Route
+    // 👇 Exact Upload API Route
     return this.http.post<any>(`${this.baseUrl}/uploadcustomerimage/${id}`, formData, { headers });
   }
 
@@ -64,5 +69,45 @@ updateProfile(id: string | number, data: Partial<UserProfile>): Observable<any> 
   // 5. Delete Account
   deleteAccount(id: string | number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.ngrokHeaders });
+  }
+
+  /**
+   * Build a browser-loadable URL for a Laravel "public disk" avatar.
+   *
+   * Your file lives at:  storage/app/public/customers/<file>.png
+   * Laravel serves it at: http://192.168.1.117:1234/storage/customers/<file>.png
+   * (requires `php artisan storage:link` — see note below).
+   *
+   * The DB might store the path in several shapes; this normalises all of them
+   * to  {serverOrigin}/storage/customers/<file>:
+   *   "customers/x.png"           -> http://192.168.1.117:1234/storage/customers/x.png
+   *   "/storage/customers/x.png"  -> http://192.168.1.117:1234/storage/customers/x.png
+   *   "storage/customers/x.png"   -> http://192.168.1.117:1234/storage/customers/x.png
+   *   "public/customers/x.png"    -> http://192.168.1.117:1234/storage/customers/x.png
+   *   "x.png" (bare filename)     -> http://192.168.1.117:1234/storage/customers/x.png
+   *   "http://.../x.png"          -> used as-is (already absolute)
+   *   "" / null / undefined       -> "" (component shows the default avatar)
+   */
+  resolveImageUrl(raw?: string | null): string {
+    if (!raw) return '';
+    let val = String(raw).trim();
+    if (!val) return '';
+
+    // Already usable as-is: absolute http(s), protocol-relative, data: or blob:
+    if (/^(https?:)?\/\//i.test(val) || val.startsWith('data:') || val.startsWith('blob:')) {
+      return val;
+    }
+
+    // Normalise a Laravel storage path into the public /storage/... web path
+    val = val.replace(/^\/+/, '');        // drop any leading slashes
+    val = val.replace(/^public\//i, '');  // "public/customers/x.png" -> "customers/x.png"
+    val = val.replace(/^storage\//i, ''); // "storage/customers/x.png" -> "customers/x.png"
+
+    // Bare filename with no folder → it lives in the customers/ folder
+    if (!val.includes('/')) {
+      val = `customers/${val}`;
+    }
+
+    return `${this.serverOrigin}/storage/${val}`;
   }
 }

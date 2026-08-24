@@ -58,16 +58,46 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  loadProfile() {
+  // Pull the avatar out of an API response no matter which key the backend used.
+  // (avatar_url is expected, but we fall back to common alternatives just in case.)
+  private pickAvatar(obj: any): string {
+    return (
+      obj?.avatar_url ||
+      obj?.avatar ||
+      obj?.image ||
+      obj?.image_url ||
+      obj?.photo ||
+      obj?.profile_image ||
+      obj?.customer_image ||
+      ''
+    );
+  }
+
+  loadProfile(bustCache = false) {
     this.isLoading = true;
     if (!this.userId) return;
 
     this.profileService.getProfile(this.userId).subscribe({
       next: (res: UserProfile) => {
+        // 🔍 Debug: check what the server actually returns for the avatar.
+        // Look here: is the avatar present? Is it "customers/x.png", "/storage/...", etc.?
+        console.log('[profile] loaded from server:', res);
+
         this.profile = { ...res };
-        if (res.avatar_url) {
-          this.previewAvatar = res.avatar_url;
+
+        // ✅ Build a FULL Laravel /storage URL. If nothing is returned,
+        //    previewAvatar stays null and the default avatar shows.
+        const rawAvatar = this.pickAvatar(res);
+        if (rawAvatar) {
+          let url = this.profileService.resolveImageUrl(rawAvatar);
+          if (bustCache) {
+            url += `${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+          }
+          this.previewAvatar = url;
+        } else {
+          this.previewAvatar = null;
         }
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -84,7 +114,7 @@ export class ProfileComponent implements OnInit {
     const file = event.target.files[0];
     if (!file) return;
 
-    const MAX_SIZE_BYTES = 1024 * 1024; 
+    const MAX_SIZE_BYTES = 1024 * 1024;
     if (file.size > MAX_SIZE_BYTES) {
       alert(`⚠️ File size exceeds 1MB limit! Selected file is ${(file.size / 1024).toFixed(2)}KB.`);
       event.target.value = '';
@@ -102,7 +132,7 @@ export class ProfileComponent implements OnInit {
       }
 
       this.selectedFile = file;
-      this.previewAvatar = img.src;
+      this.previewAvatar = img.src; // instant local preview (blob: url)
       this.uploadPhoto();
     };
   }
@@ -115,11 +145,22 @@ export class ProfileComponent implements OnInit {
 
     this.profileService.uploadAvatar(this.userId, formData).subscribe({
       next: (res: any) => {
+        // 🔍 Debug: does the upload response carry the new avatar path back?
+        console.log('[profile] upload response:', res);
         alert('✅ Profile photograph updated successfully!');
-        if (res.avatar_url) {
-          this.profile.avatar_url = res.avatar_url;
-          this.previewAvatar = res.avatar_url; 
-          this.cdr.detectChanges(); 
+
+        const rawAvatar = this.pickAvatar(res);
+        if (rawAvatar) {
+          // Response included the new path → show it right away.
+          // ?t=... busts the browser cache in case a filename was reused.
+          const url = this.profileService.resolveImageUrl(rawAvatar);
+          this.profile.avatar_url = rawAvatar;
+          this.previewAvatar = `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+          this.cdr.detectChanges();
+        } else {
+          // Response didn't include the path → pull the fresh record from the DB
+          // (with cache-busting) so the saved photo shows without a manual reload.
+          this.loadProfile(true);
         }
       },
       error: (err) => {
@@ -130,6 +171,17 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // 🖼️ Fired when the <img> can't load the avatar URL (e.g. 404 / wrong host).
+  //    Logs the EXACT url that failed — the single most useful clue if the photo
+  //    still doesn't show — then falls back to the default asset.
+  onAvatarError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    if (img.src.includes('default-avatar')) return; // stop loop if default is also missing
+    console.warn('[profile] avatar failed to load:', img.src);
+    this.previewAvatar = null;
+    this.cdr.detectChanges();
+  }
+
   saveProfileInfo() {
     if (!this.profile.email || !this.profile.name) {
       alert('⚠️ Name and Email are required.');
@@ -137,7 +189,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.isSavingInfo = true;
-    
+
     const payload = {
       name: this.profile.name,
       email: this.profile.email,
