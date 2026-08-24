@@ -16,6 +16,11 @@ import { ProfileComponent } from './pages/customer/profile/profile';
 import { ChefDashboardComponent } from './pages/chef-dashboard/chef-dashboard/chef-dashboard';
 import { loginGuard } from './login.guard';
 
+// 🆕 New Role Portals
+import { DeliveryExecutiveComponent } from './pages/delivery-executive/delivery-executive';
+import { StoreManagerComponent } from './pages/store-manager/store-manager';
+import { KitchenAssistantComponent } from './pages/kitchen-assistant/kitchen-assistant';
+
 // 👑 Admin Components Imports
 import { AdminLoginComponent } from './pages/admin-login/admin-login';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
@@ -37,13 +42,18 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },      
   { path: 'my-orders', component: MyOrdersComponent, canActivate: [authGuard] },      
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  { path: 'chef/dashboard', component: ChefDashboardComponent, canActivate: [authGuard] }, 
+  { path: 'chef/dashboard', component: ChefDashboardComponent, canActivate: [authGuard] },
   { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [authGuard] },
   { path: 'inventory', component: InventoryComponent, canActivate: [authGuard] },
-  { path: 'deliveries', component: DeliveriesComponent, canActivate: [authGuard] },     
+  { path: 'deliveries', component: DeliveriesComponent, canActivate: [authGuard] },
   { path: 'employees', component: EmployeesComponent, canActivate: [authGuard] },
   { path: 'admin-settings', component: AdminSettingsComponent, canActivate: [authGuard] },
   { path: 'membership', component: MembershipComponent, canActivate: [authGuard] },
+
+  // 🆕 New Role Portals
+  { path: 'delivery/dashboard', component: DeliveryExecutiveComponent, canActivate: [authGuard] },
+  { path: 'store-manager/dashboard', component: StoreManagerComponent, canActivate: [authGuard] },
+  { path: 'kitchen-assistant/dashboard', component: KitchenAssistantComponent, canActivate: [authGuard] },
 
   // Wildcard Route
   { path: '**', redirectTo: 'home' }

@@ -23,8 +23,8 @@ export class DeliveryService {
   private http = inject(HttpClient);
   
   // 🟢 Base URLs
-  private apiUrl = `http://192.168.1.117:1234/api/delivery`;
-  private orderHistoryBaseUrl = `http://192.168.1.117:1234/api/orderhistory`;
+  private apiUrl = `http://192.168.0.101:1234/api/delivery`;
+  private orderHistoryBaseUrl = `http://192.168.0.101:1234/api/orderhistory`;
 
   // 🎯 ngrok warning page bypass headers
   private ngrokHeaders = new HttpHeaders({

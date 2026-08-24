@@ -20,7 +20,7 @@ export class RegisterService {
   private http = inject(HttpClient);
   
   // Laravel API Endpoint for Customers / User Registration
-  private apiUrl = 'http://192.168.1.117:1234/api/customers';
+  private apiUrl = 'http://192.168.0.101:1234/api/customers';
 
   // 1. Fetch All Registered Customers
   getRegisteredUsers(): Observable<CustomerUser[]> {

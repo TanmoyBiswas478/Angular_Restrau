@@ -20,8 +20,14 @@ export const loginGuard = () => {
 
     if (role === 'admin') {
       router.navigate(['/admin/dashboard']);
-    } else if (role.includes('manager') || role.includes('delivery')) {
-      router.navigate(['/dashboard']);
+    } else if (role.includes('delivery') || role.includes('rider')) {
+      router.navigate(['/delivery/dashboard']);
+    } else if (role.includes('assistant')) {
+      router.navigate(['/kitchen-assistant/dashboard']); // Chef se pehle
+    } else if (role.includes('chef') || role.includes('kitchen')) {
+      router.navigate(['/chef/dashboard']);
+    } else if (role.includes('manager') || role.includes('manage')) {
+      router.navigate(['/store-manager/dashboard']);
     } else {
       router.navigate(['/home']);
     }

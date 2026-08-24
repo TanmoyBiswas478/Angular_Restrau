@@ -1,5 +1,5 @@
 <div class="my-orders-container">
-  
+
   <div class="orders-header">
     <h2>🛍️ My Orders & Live Tracking</h2>
     <p>Track your active food dispatches and view past order history in real-time.</p>
@@ -16,17 +16,21 @@
   </div>
 
   <div *ngIf="!isLoading && myOrders.length > 0" class="orders-list">
-    <div *ngFor="let order of myOrders" class="order-card" [class.delivered]="order.status === 'Delivered'">
-      
+    <div *ngFor="let order of myOrders" class="order-card" [ngClass]="{
+      'status-prep': order.status === 'Preparing',
+      'status-out': order.status === 'Out for Delivery',
+      'status-delivered': order.status === 'Delivered'
+    }">
+
       <!-- Card Top Info Header -->
       <div class="card-header">
         <div>
 
           <span class="order-number">ORDER ID: #{{ order.orderNumber }}</span>
-          <!-- <span class="order-date">Read-Only Live Record</span> -->
-           
+          <span class="order-date" *ngIf="order.orderDate">🗓️ Ordered on {{ order.orderDate }}</span>
+
         </div>
-        
+
         <span class="status-badge" [ngClass]="{
           'prep': order.status === 'Preparing',
           'out': order.status === 'Out for Delivery',
@@ -44,7 +48,7 @@
           <span>Preparing</span>
         </div>
         <div class="tracker-line" [class.active]="order.status === 'Out for Delivery' || order.status === 'Delivered'"></div>
-        
+
         <div class="tracker-step" [class.active]="order.status === 'Out for Delivery' || order.status === 'Delivered'">
           <div class="step-icon">🛵</div>
           <span>Out for Delivery</span>

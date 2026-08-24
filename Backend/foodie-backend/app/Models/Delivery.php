@@ -16,6 +16,7 @@ class Delivery extends Model
         'delivery_address',
         'driver_name',
         'driver_phone',
+        'driver_eid', // 🆕 reliable Delivery Executive assignment by EID
         'items',
         'total',
         'status',

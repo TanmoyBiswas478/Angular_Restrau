@@ -43,6 +43,7 @@
   padding: 1.5rem;
   border: 1px solid #E2E8F0;
   box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .card-header {
@@ -60,7 +61,10 @@
 }
 
 .order-date {
+  display: block;
+  margin-top: 4px;
   font-size: 0.8rem;
+  font-weight: 600;
   color: #94A3B8;
 }
 
@@ -171,4 +175,70 @@
   .card-body {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============================================================
+   STATUS-BASED CARD THEMES
+   Preparing → warm amber • Out for Delivery → ash/slate • Delivered → green
+   Text colours shift with the background so everything stays readable.
+   ============================================================ */
+
+/* 🍳 Preparing — clear warm amber */
+.order-card.status-prep {
+  background: #FDE68A;
+  border-color: #FBBF24;
+}
+.order-card.status-prep .order-number { color: #78350F; }
+.order-card.status-prep .order-date   { color: #92400E; }
+.order-card.status-prep .total-label  { color: #92400E; }
+.order-card.status-prep .total-amount { color: #78350F; }
+.order-card.status-prep .card-footer  { border-top-color: #FBBF24; }
+.order-card.status-prep hr            { border-color: #FBBF24; }
+
+/* 🛵 Out for Delivery — clear ash / slate grey */
+.order-card.status-out {
+  background: #CBD5E1;
+  border-color: #94A3B8;
+}
+.order-card.status-out .order-number { color: #1E293B; }
+.order-card.status-out .order-date   { color: #334155; }
+.order-card.status-out .total-label  { color: #334155; }
+.order-card.status-out .total-amount { color: #0F172A; }
+.order-card.status-out .card-footer  { border-top-color: #94A3B8; }
+.order-card.status-out hr            { border-color: #94A3B8; }
+
+/* 🎉 Delivered — green */
+.order-card.status-delivered {
+  background: #DCFCE7;
+  border-color: #86EFAC;
+}
+.order-card.status-delivered .order-number { color: #065F46; }
+.order-card.status-delivered .order-date   { color: #047857; }
+.order-card.status-delivered .total-label  { color: #047857; }
+.order-card.status-delivered .total-amount { color: #065F46; }
+.order-card.status-delivered .card-footer  { border-top-color: #A7F3D0; }
+.order-card.status-delivered hr            { border-color: #A7F3D0; }
+
+/* Keep the inner panels legible on every tinted card */
+.order-card.status-prep .items-box,
+.order-card.status-prep .delivery-box,
+.order-card.status-prep .tracker-wrapper,
+.order-card.status-out .items-box,
+.order-card.status-out .delivery-box,
+.order-card.status-out .tracker-wrapper,
+.order-card.status-delivered .items-box,
+.order-card.status-delivered .delivery-box,
+.order-card.status-delivered .tracker-wrapper {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Darken the small panel labels so they stay readable on tinted cards */
+.order-card.status-prep .items-box strong,
+.order-card.status-prep .delivery-box strong,
+.order-card.status-out .items-box strong,
+.order-card.status-out .delivery-box strong,
+.order-card.status-delivered .items-box strong,
+.order-card.status-delivered .delivery-box strong {
+  color: #475569;
 }

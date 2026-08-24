@@ -19,7 +19,7 @@ export interface InventoryItem {
 })
 export class InventoryService {
   private http = inject(HttpClient);
-  private apiUrl = `http://192.168.1.117:1234/api/inventory`;
+  private apiUrl = `http://192.168.0.101:1234/api/inventory`;
 
   // 🎯 ngrok warning page ko bypass karne ke liye headers
   private ngrokHeaders = new HttpHeaders({

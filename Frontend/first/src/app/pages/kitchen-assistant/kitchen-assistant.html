@@ -1,0 +1,93 @@
+<div class="portal-container">
+
+  <!-- HEADER -->
+  <div class="portal-header">
+    <div>
+      <h2>🧑‍🍳 Kitchen Assistant Console</h2>
+      <p>Track kitchen stock, deduct what's used through the day, and request restocks from admin.</p>
+    </div>
+    <div class="header-right">
+      <span class="ka-badge">🧑‍🍳 <strong>{{ currentName }}</strong> ({{ currentEid }})</span>
+      <button class="refresh-btn" (click)="fetchStock()">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <!-- LOW STOCK BANNER -->
+  <div *ngIf="lowStockItems.length > 0" class="alert-banner">
+    ⚠️ <strong>LOW STOCK ALERT:</strong>
+    <span>{{ lowStockItems.length }} ingredient(s) at or below the minimum threshold — consider a restock request.</span>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar-box">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="🔍 Search ingredients..." />
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">🔄 Fetching kitchen stock...</div>
+
+  <!-- STOCK TABLE -->
+  <div class="table-wrapper" *ngIf="!isLoading && filteredStocks.length > 0">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Ingredient</th>
+          <th>Stock Quantity</th>
+          <th>Min Threshold</th>
+          <th>Status</th>
+          <th style="min-width: 230px;">Deduct Used Stock</th>
+          <th style="min-width: 220px;">Restock Request</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredStocks; trackBy: trackById">
+          <td class="font-bold">{{ item.ingredient_name }}</td>
+          <td><span class="qty-text">{{ item.quantity }} {{ item.unit }}</span></td>
+          <td class="muted">{{ item.minimum_stock_alert }} {{ item.unit }}</td>
+          <td>
+            <span class="badge" [ngClass]="statusClass(item.status)">{{ item.status }}</span>
+          </td>
+
+          <!-- DEDUCT -->
+          <td>
+            <div class="inline-box">
+              <input
+                type="number"
+                class="qty-input"
+                [(ngModel)]="item.deduct_qty"
+                placeholder="0"
+                min="1"
+              />
+              <button class="act-btn remove" [disabled]="item._busy" (click)="deductStock(item)">
+                ➖ Deduct
+              </button>
+            </div>
+          </td>
+
+          <!-- RESTOCK REQUEST -->
+          <td>
+            <div *ngIf="item.request_to_admin === 'Pending'" class="pending-text">
+              ⏳ Pending ({{ item.request_item }} {{ item.unit }})
+            </div>
+            <div *ngIf="item.request_to_admin !== 'Pending'" class="inline-box">
+              <input
+                type="number"
+                class="qty-input"
+                [(ngModel)]="item.request_qty"
+                placeholder="Qty"
+                min="1"
+              />
+              <button class="act-btn request" [disabled]="item._busy" (click)="sendRestockRequest(item)">
+                📩 Request
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && filteredStocks.length === 0" class="empty-state">
+    <p>No kitchen stock found. The Chef or Admin adds ingredients — they'll appear here for you to manage.</p>
+  </div>
+
+</div>

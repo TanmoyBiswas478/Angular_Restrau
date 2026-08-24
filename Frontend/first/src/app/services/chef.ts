@@ -21,7 +21,7 @@ export interface KitchenRawMaterial {
 export class ChefService {
   private http = inject(HttpClient);
   
-  private apiUrl = 'http://192.168.1.117:1234/api/kitchenstocks';
+  private apiUrl = 'http://192.168.0.101:1234/api/kitchenstocks';
 
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({

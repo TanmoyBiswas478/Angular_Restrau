@@ -19,6 +19,8 @@ class Employee extends Model
         'phone',
         'avatar_url',
         'status',
+        'availability', // 🆕 Delivery Executive Online/Offline toggle
+        'store_id',     // 🆕 Store Manager branch link (nullable)
     ];
 
    

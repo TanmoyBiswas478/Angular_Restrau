@@ -1,0 +1,135 @@
+<div class="portal-container">
+
+  <!-- HEADER -->
+  <div class="portal-header">
+    <div>
+      <h2>🏪 Store Manager Dashboard</h2>
+      <p>Sales at a glance, plus quick access to inventory, staff and deliveries.</p>
+    </div>
+    <div class="header-right">
+      <span class="mgr-badge">🧑‍💼 <strong>{{ managerName }}</strong><span *ngIf="managerEid"> ({{ managerEid }})</span></span>
+      <button class="refresh-btn" (click)="loadSummary()">🔄 Refresh</button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">🔄 Loading store summary...</div>
+
+  <div *ngIf="!isLoading && summary">
+
+    <!-- SALES ROW -->
+    <h3 class="section-title">💰 Sales</h3>
+    <div class="stat-grid">
+      <div class="stat-card accent">
+        <span class="stat-label">Today's Revenue</span>
+        <span class="stat-value">{{ formatMoney(summary.sales.todaysRevenue) }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total Revenue</span>
+        <span class="stat-value">{{ formatMoney(summary.sales.totalRevenue) }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Today's Orders</span>
+        <span class="stat-value">{{ summary.sales.todaysOrders }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total Orders</span>
+        <span class="stat-value">{{ summary.sales.totalOrders }}</span>
+      </div>
+    </div>
+
+    <!-- OPS + STAFF + INVENTORY ROW -->
+    <div class="mini-grid">
+      <div class="mini-card">
+        <span class="mini-label">Pending Deliveries</span>
+        <span class="mini-value">{{ summary.operations.pendingDeliveries }}</span>
+      </div>
+      <div class="mini-card">
+        <span class="mini-label">Delivered Today</span>
+        <span class="mini-value">{{ summary.operations.deliveredToday }}</span>
+      </div>
+      <div class="mini-card">
+        <span class="mini-label">Active Staff</span>
+        <span class="mini-value">{{ summary.staff.active }} / {{ summary.staff.total }}</span>
+      </div>
+      <div class="mini-card warn" *ngIf="summary.inventory.lowStock > 0">
+        <span class="mini-label">Low Stock Items</span>
+        <span class="mini-value">{{ summary.inventory.lowStock }}</span>
+      </div>
+      <div class="mini-card" *ngIf="summary.inventory.lowStock === 0">
+        <span class="mini-label">Inventory Items</span>
+        <span class="mini-value">{{ summary.inventory.total }}</span>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <h3 class="section-title">⚡ Manage</h3>
+    <div class="action-grid">
+      <button class="action-tile" (click)="goToInventory()">
+        <span class="tile-icon">📦</span>
+        <span class="tile-title">Inventory</span>
+        <span class="tile-sub">{{ summary.inventory.total }} items · {{ summary.inventory.outOfStock }} out</span>
+      </button>
+      <button class="action-tile" (click)="goToStaff()">
+        <span class="tile-icon">👥</span>
+        <span class="tile-title">Staff</span>
+        <span class="tile-sub">{{ summary.staff.total }} employees</span>
+      </button>
+      <button class="action-tile" (click)="goToDeliveries()">
+        <span class="tile-icon">🚚</span>
+        <span class="tile-title">Deliveries</span>
+        <span class="tile-sub">{{ summary.operations.pendingDeliveries }} pending</span>
+      </button>
+    </div>
+
+    <!-- TWO COLUMN: RECENT ORDERS + LOW STOCK -->
+    <div class="two-col">
+
+      <div class="panel">
+        <div class="panel-head">🧾 Recent Orders</div>
+        <div class="table-wrapper" *ngIf="summary.recentOrders.length > 0; else noOrders">
+          <table class="data-table">
+            <thead>
+              <tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of summary.recentOrders">
+                <td class="font-bold">{{ o.id }}</td>
+                <td>{{ o.customer }}</td>
+                <td class="font-bold">{{ formatMoney(o.amount) }}</td>
+                <td><span class="badge" [ngClass]="statusClass(o.status)">{{ o.status }}</span></td>
+                <td class="muted">{{ o.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noOrders><div class="empty-mini">No orders yet.</div></ng-template>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">⚠️ Stock Watch</div>
+        <div class="table-wrapper" *ngIf="summary.lowStockList.length > 0; else noStock">
+          <table class="data-table">
+            <thead>
+              <tr><th>Item</th><th>Qty</th><th>Min</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let i of summary.lowStockList">
+                <td class="font-bold">{{ i.item_name }}</td>
+                <td>{{ i.quantity }} {{ i.unit }}</td>
+                <td class="muted">{{ i.min_level }} {{ i.unit }}</td>
+                <td><span class="badge" [ngClass]="statusClass(i.status)">{{ i.status }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noStock><div class="empty-mini">No inventory records.</div></ng-template>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !summary" class="empty-state">
+    <p>Couldn't load the store summary. Check that the backend is running and try Refresh.</p>
+  </div>
+
+</div>
