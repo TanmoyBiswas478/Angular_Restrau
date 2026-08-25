@@ -22,7 +22,7 @@ export interface KitchenStock {
 export class KitchenAssistantService {
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://192.168.0.101:1234/api/kitchen-assistant';
+  private apiUrl = 'http://192.168.1.117:1234/api/kitchen-assistant';
 
   // 🎯 ngrok warning page bypass headers
   private ngrokHeaders = new HttpHeaders({

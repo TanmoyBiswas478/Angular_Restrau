@@ -41,10 +41,10 @@ export class AdminDashboardComponent implements OnInit {
 
   restockRequests: any[] = [];
 
-  private deliveryApiUrl = 'http://192.168.0.101:1234/api/dashboard/analytics';
-  private customerApiUrl = 'http://192.168.0.101:1234/api/customers'; 
-  private kitchenApiUrl = 'http://192.168.0.101:1234/api/kitchenstocks';
-  private employeeApiUrl = 'http://192.168.0.101:1234/api/employees';
+  private deliveryApiUrl = 'http://192.168.1.117:1234/api/dashboard/analytics';
+  private customerApiUrl = 'http://192.168.1.117:1234/api/customers'; 
+  private kitchenApiUrl = 'http://192.168.1.117:1234/api/kitchenstocks';
+  private employeeApiUrl = 'http://192.168.1.117:1234/api/employees';
 
   // 🎯 Strong Dynamic Header Generator
   private getHeaders(): HttpHeaders {

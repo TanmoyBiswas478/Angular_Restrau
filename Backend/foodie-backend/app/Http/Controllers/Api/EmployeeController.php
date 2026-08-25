@@ -131,4 +131,104 @@ class EmployeeController extends Controller
             ], 500);
         }
     }
+
+    
+    // 5. SHOW EMPLOYEE PROFILE (By id or eid)
+    public function show($id)
+    {
+        try {
+            $employee = Employee::where('id', $id)->orWhere('eid', $id)->first();
+            
+            if (!$employee) {
+                return response()->json(['message' => 'Employee not found'], 404);
+            }
+
+            // 🔍 Smart Avatar Logic: Check if avatar_url is already a full URL (Google/FB link) or local path
+            $rawAvatar = $employee->avatar_url;
+            $resolvedAvatar = null;
+
+            if ($rawAvatar) {
+                if (preg_match('/^https?:\/\//i', $rawAvatar)) {
+                    // Agar pehle se http/https link hai (External URL), toh as-is bhejo
+                    $resolvedAvatar = $rawAvatar;
+                } else {
+                    // Agar local file path hai, toh storage link generate karo
+                    $resolvedAvatar = asset('storage/' . ltrim($rawAvatar, '/'));
+                }
+            }
+
+            return response()->json([
+                'id' => $employee->id,
+                'customer_id' => $employee->eid, 
+                'name' => $employee->name,
+                'email' => $employee->email,
+                'phone' => $employee->phone,
+                'address' => $employee->address ?? '',
+                'membership' => 'Staff Member', 
+                'avatar_url' => $resolvedAvatar, // 👈 Ab yeh 100% sahi URL bhejega
+                'role' => $employee->role
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
+    // 6. UPLOAD EMPLOYEE AVATAR PHOTO
+    public function uploadAvatar(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'avatar' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            ]);
+
+            $employee = Employee::where('id', $id)->orWhere('eid', $id)->first();
+            if (!$employee) {
+                return response()->json(['message' => 'Employee not found'], 404);
+            }
+
+            // Local folder mein store karein
+            $path = $request->file('avatar')->store('employees', 'public');
+            
+            // Database ke avatar_url field ko update kar rahe hain
+            $employee->avatar_url = $path;
+            $employee->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Employee photo updated successfully.',
+                'avatar_url' => asset('storage/' . $path)
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // 7. CHANGE EMPLOYEE PASSWORD
+    public function changePassword(Request $request, $id)
+    {
+        try {
+            $employee = Employee::where('id', $id)->orWhere('eid', $id)->first();
+            if (!$employee) {
+                return response()->json(['message' => 'Employee not found'], 404);
+            }
+
+            // User table mein bhi password update karne ke liye
+            $user = User::where('eid', $employee->eid)->orWhere('email', $employee->email)->first();
+
+            if ($request->has('current_password')) {
+                if ($user && !Hash::check($request->current_password, $user->password)) {
+                    return response()->json(['message' => 'Current password does not match'], 400);
+                }
+            }
+
+            $newHash = Hash::make($request->new_password);
+            
+            if ($user) {
+                $user->update(['password' => $newHash]);
+            }
+
+            return response()->json(['message' => 'Password changed successfully'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Server Error: ' . $e->getMessage()], 500);
+        }
+    }
 }

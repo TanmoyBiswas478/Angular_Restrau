@@ -35,7 +35,7 @@ export interface PartnerSummary {
 export class DeliveryPartnerService {
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://192.168.0.101:1234/api/delivery-partner';
+  private apiUrl = 'http://192.168.1.117:1234/api/delivery-partner';
 
   // 🎯 ngrok warning page bypass headers (same pattern as other services)
   private ngrokHeaders = new HttpHeaders({

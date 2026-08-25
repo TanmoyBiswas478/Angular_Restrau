@@ -42,10 +42,38 @@ export class ProfileComponent implements OnInit {
   selectedFile: File | null = null;
 
   ngOnInit() {
-    // 🛑 No LocalStorage: Strictly using AuthService Observable
     this.authService.currentUser$.subscribe((user: any) => {
       if (user) {
-        this.userId = user.customer_id || user.cid || user.id || '';
+        const role = (user.role || '').toLowerCase();
+        
+        // Agar user customer nahi hai (matlab Admin, Chef, Store Manager, etc.), 
+        // toh unki ID ke aage 'EID' check karenge ya unka table employee hai.
+        if (role === 'customer' || role === 'user') {
+          this.userId = user.customer_id || user.cid || user.id || '';
+        } else {
+          // Staff ke liye agar user.eid nahi hai toh hum unki numeric id ya eid use karenge
+          this.userId = user.eid || (user.id ? `EID${user.id}` : '') || user.id || '';
+          
+          // Agar database mein staff ki id sirf number (jaise 1, 2) save hai aur route /employees/1 mangta hai:
+          // Agar aapka backend numbers ko support karta hai, toh aap direct user.id bhi de sakte hain.
+          // Lekin hamare EmployeeController mein humne `orWhere('id', id)->orWhere('eid', id)` likha hai, 
+          // toh yeh '1' ya 'EID1' dono ko pehchaan lega!
+          if (!user.eid && user.id) {
+            this.userId = user.id; 
+          }
+        }
+
+        // Sabse badiya aur pakka tareeka: Agar role customer nahi hai, toh hum ensure karein ki 
+        // service ko pata chale ki yeh employee hai. Hum yahan user.id ya user.eid bhej sakte hain.
+        if (role !== 'customer' && role !== 'user' && user.id && !String(this.userId).startsWith('EID')) {
+           // Agar aapka employee table auto-increment id use karta hai:
+           this.userId = user.id;
+        } else if (user.customer_id) {
+           this.userId = user.customer_id;
+        }
+
+        console.log('[profile init] Resolved User ID:', this.userId, 'Role:', role);
+
         if (this.userId) {
           this.loadProfile();
         } else {

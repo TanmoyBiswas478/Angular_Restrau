@@ -5,10 +5,11 @@ import { Observable } from 'rxjs';
 export interface UserProfile {
   id?: number;
   customer_id?: string;
+  eid?: string; // 👈 Staff ID support ke liye
   name: string;
   email: string;
   phone?: string;
-  address?: string; // 👈 Address bhi add kar diya
+  address?: string;
   membership?: string;
   avatar_url?: string;
   role?: string;
@@ -20,15 +21,7 @@ export interface UserProfile {
 export class ProfileService {
   private http = inject(HttpClient);
 
-  // 👇 1. Aapka Local Backend IP
-  private baseUrl = 'http://192.168.0.101:1234/api';
-
-  // 👇 2. Customers API URL (Pehle /profile tha, ab /customers hai)
-  private apiUrl = `${this.baseUrl}/customers`;
-
-  // 👇 3. Backend ORIGIN (without /api). Laravel serves uploaded files from
-  //    http://192.168.0.101:1234/storage/... (via the public/storage symlink),
-  //    NOT from under /api and NOT from the Angular dev server on :4200.
+  private baseUrl = 'http://192.168.1.117:1234/api';
   private serverOrigin = this.baseUrl.replace(/\/api\/?$/, '');
 
   private ngrokHeaders = new HttpHeaders({
@@ -36,76 +29,98 @@ export class ProfileService {
     'Accept': 'application/json'
   });
 
-  // 1. Fetch Profile Details
-  getProfile(id: string | number): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}/${id}`, { headers: this.ngrokHeaders });
+  // Helper: Pata lagana ki user Customer hai ya Employee (Staff)
+  private getEndpoint(id: string | number): string {
+    const idStr = String(id);
+    
+    // 🛑 Agar ID 'EID' se shuru hoti hai YA agar user staff hai (Aap yahan role check ya localStorage use kar sakte hain)
+    // Lekin sabse aasan tareeka hai ki hum AuthService ya current user se role dekhein, 
+    // ya phir agar ID number choti hai aur wo customer nahi hai toh employee endpoint check ho.
+    
+    if (idStr.toUpperCase().startsWith('EID')) {
+      return `${this.baseUrl}/employees/${id}`;
+    }
+    
+    // ⚠️ Agar aap Admin/Chef login hain aur ID '1' ya kuch aur number hai jo ki Employee table mein hai:
+    // Hum check kar sakte hain ki current logged-in user ka role customer nahi hai.
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (currentUser && currentUser.role && currentUser.role.toLowerCase() !== 'customer') {
+      return `${this.baseUrl}/employees/${id}`;
+    }
+
+    return `${this.baseUrl}/customers/${id}`;
   }
 
-  // 2. Update Profile Info (Email/Name/Phone/Address)
-  // services/profile.ts
-updateProfile(id: string | number, data: Partial<UserProfile>): Observable<any> {
-  const headers = new HttpHeaders({
-    'ngrok-skip-browser-warning': 'true',
-    'Accept': 'application/json',
-    'Content-Type': 'application/json' // 👈 YEH SABSE ZAROORI HAI
-  });
-  return this.http.put<any>(`${this.apiUrl}/${id}`, data, { headers });
-}
+  // 1. Fetch Profile Details
+  getProfile(id: string | number): Observable<UserProfile> {
+    const idStr = String(id);
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const isStaff = idStr.toUpperCase().startsWith('EID') || (currentUser.role && currentUser.role.toLowerCase() !== 'customer');
+
+    const url = this.getEndpoint(id);
+    
+    return isStaff
+      ? this.http.get<UserProfile>(`${this.baseUrl}/employees/${id}/profile`, { headers: this.ngrokHeaders })
+      : this.http.get<UserProfile>(url, { headers: this.ngrokHeaders });
+  }
+
+  // 2. Update Profile Info
+  updateProfile(id: string | number, data: Partial<UserProfile>): Observable<any> {
+    const headers = new HttpHeaders({
+      'ngrok-skip-browser-warning': 'true',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+    const url = this.getEndpoint(id);
+    return this.http.put<any>(url, data, { headers });
+  }
 
   // 3. Upload Profile Photo
   uploadAvatar(id: string | number, formData: FormData): Observable<any> {
     const headers = new HttpHeaders({
       'ngrok-skip-browser-warning': 'true'
     });
-    // 👇 Exact Upload API Route
-    return this.http.post<any>(`${this.baseUrl}/uploadcustomerimage/${id}`, formData, { headers });
+    const idStr = String(id);
+    const uploadUrl = idStr.toUpperCase().startsWith('EID')
+      ? `${this.baseUrl}/employees/${id}/avatar`
+      : `${this.baseUrl}/uploadcustomerimage/${id}`;
+
+    return this.http.post<any>(uploadUrl, formData, { headers });
   }
 
   // 4. Change Password
   changePassword(id: string | number, passwords: { current_password?: string; new_password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${id}/change-password`, passwords, { headers: this.ngrokHeaders });
+    const idStr = String(id);
+    const passUrl = idStr.toUpperCase().startsWith('EID')
+      ? `${this.baseUrl}/employees/${id}/change-password`
+      : `${this.baseUrl}/customers/${id}/change-password`;
+
+    return this.http.post<any>(passUrl, passwords, { headers: this.ngrokHeaders });
   }
 
   // 5. Delete Account
   deleteAccount(id: string | number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.ngrokHeaders });
+    const url = this.getEndpoint(id);
+    return this.http.delete<any>(url, { headers: this.ngrokHeaders });
   }
 
-  /**
-   * Build a browser-loadable URL for a Laravel "public disk" avatar.
-   *
-   * Your file lives at:  storage/app/public/customers/<file>.png
-   * Laravel serves it at: http://192.168.0.101:1234/storage/customers/<file>.png
-   * (requires `php artisan storage:link` — see note below).
-   *
-   * The DB might store the path in several shapes; this normalises all of them
-   * to  {serverOrigin}/storage/customers/<file>:
-   *   "customers/x.png"           -> http://192.168.0.101:1234/storage/customers/x.png
-   *   "/storage/customers/x.png"  -> http://192.168.0.101:1234/storage/customers/x.png
-   *   "storage/customers/x.png"   -> http://192.168.0.101:1234/storage/customers/x.png
-   *   "public/customers/x.png"    -> http://192.168.0.101:1234/storage/customers/x.png
-   *   "x.png" (bare filename)     -> http://192.168.0.101:1234/storage/customers/x.png
-   *   "http://.../x.png"          -> used as-is (already absolute)
-   *   "" / null / undefined       -> "" (component shows the default avatar)
-   */
   resolveImageUrl(raw?: string | null): string {
     if (!raw) return '';
     let val = String(raw).trim();
     if (!val) return '';
 
-    // Already usable as-is: absolute http(s), protocol-relative, data: or blob:
+    // 🛑 Agar yeh pehle se hi external URL hai (jaise Google Drive, Facebook, ya koi aur link), toh ise bina kisi badlaav ke return karo!
     if (/^(https?:)?\/\//i.test(val) || val.startsWith('data:') || val.startsWith('blob:')) {
       return val;
     }
 
-    // Normalise a Laravel storage path into the public /storage/... web path
-    val = val.replace(/^\/+/, '');        // drop any leading slashes
-    val = val.replace(/^public\//i, '');  // "public/customers/x.png" -> "customers/x.png"
-    val = val.replace(/^storage\//i, ''); // "storage/customers/x.png" -> "customers/x.png"
+    // Agar local file path hai toh storage link banayein
+    val = val.replace(/^\/+/, '');        
+    val = val.replace(/^public\//i, '');  
+    val = val.replace(/^storage\//i, ''); 
 
-    // Bare filename with no folder → it lives in the customers/ folder
     if (!val.includes('/')) {
-      val = `customers/${val}`;
+      val = `employees/${val}`; // Staff/Employees ke liye 'employees/' folder
     }
 
     return `${this.serverOrigin}/storage/${val}`;

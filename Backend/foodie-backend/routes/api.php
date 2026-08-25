@@ -75,3 +75,8 @@ Route::post('stores',               [StoreManagerController::class, 'createStore
 Route::get('kitchen-assistant/stocks',        [KitchenAssistantController::class, 'index']);
 Route::put('kitchen-assistant/deduct/{id}',   [KitchenAssistantController::class, 'deduct']);
 Route::put('kitchen-assistant/request/{id}',  [KitchenAssistantController::class, 'requestRestock']);
+
+
+Route::get('employees/{id}/profile', [EmployeeController::class, 'show']);
+Route::post('employees/{id}/avatar', [EmployeeController::class, 'uploadAvatar']);
+Route::post('employees/{id}/change-password', [EmployeeController::class, 'changePassword']);

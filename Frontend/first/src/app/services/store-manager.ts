@@ -56,7 +56,7 @@ export interface Store {
 export class StoreManagerService {
   private http = inject(HttpClient);
 
-  private apiUrl = 'http://192.168.0.101:1234/api';
+  private apiUrl = 'http://192.168.1.117:1234/api';
 
   // 🎯 ngrok warning page bypass headers
   private ngrokHeaders = new HttpHeaders({

@@ -28,13 +28,6 @@
   gap: 2.5rem;
 }
 
-@media (max-width: 1024px) {
-  .employees-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 🌟 Dynamic Card Containers for Light/Dark Mode */
 .employee-table-card, 
 .add-employee-card {
   background: var(--card-bg, #FFFFFF);
@@ -42,6 +35,10 @@
   padding: 2rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid var(--border-color, #F1F5F9);
+  
+  /* 🚀 MAIN FIX: Isse Grid chota hone par shrink hoga aur table overflow nahi karega */
+  min-width: 0;
+  overflow: hidden;
 }
 
 .employee-table-card h3, 
@@ -55,13 +52,16 @@
 }
 
 .table-responsive {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  min-width: 650px;
 }
 
 th {
@@ -70,6 +70,7 @@ th {
   font-size: 0.9rem;
   padding: 12px 16px;
   border-bottom: 2px solid var(--border-color, #F1F5F9);
+  white-space: nowrap;
 }
 
 td {
@@ -80,13 +81,11 @@ td {
   vertical-align: middle;
 }
 
-/* Row Highlight when editing */
 tr.editing-row {
   background: rgba(245, 158, 11, 0.1) !important;
   border-left: 4px solid #D97706;
 }
 
-/* 🌟 Staff Profile Avatar Styling */
 .staff-profile {
   display: flex;
   align-items: center;
@@ -110,6 +109,7 @@ tr.editing-row {
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .contact-info span {
@@ -123,7 +123,6 @@ tr.editing-row {
   font-size: 0.85rem;
 }
 
-/* 🌟 Status Select Pill */
 .status-select-pill {
   font-weight: 700;
   padding: 6px 14px;
@@ -135,32 +134,12 @@ tr.editing-row {
   transition: all 0.2s ease;
 }
 
-.status-active {
-  background: #D1FAE5 !important;
-  color: #059669 !important;
-}
+.status-active { background: #D1FAE5 !important; color: #059669 !important; }
+.status-leave { background: #FEF3C7 !important; color: #D97706 !important; }
+.status-resigned { background: #F3F4F6 !important; color: #4B5563 !important; }
+.status-suspended { background: #FFE4E6 !important; color: #E11D48 !important; }
+.status-select-pill option { color: #0F172A !important; background-color: #FFFFFF !important; }
 
-.status-leave {
-  background: #FEF3C7 !important;
-  color: #D97706 !important;
-}
-
-.status-resigned {
-  background: #F3F4F6 !important;
-  color: #4B5563 !important;
-}
-
-.status-suspended {
-  background: #FFE4E6 !important;
-  color: #E11D48 !important;
-}
-
-.status-select-pill option {
-  color: #0F172A !important;
-  background-color: #FFFFFF !important;
-}
-
-/* 🌟 Actions Buttons Container */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -181,11 +160,7 @@ tr.editing-row {
   justify-content: center;
 }
 
-.edit-btn:hover {
-  background: #D97706;
-  color: #FFFFFF;
-  transform: scale(1.05);
-}
+.edit-btn:hover { background: #D97706; color: #FFFFFF; transform: scale(1.05); }
 
 .delete-btn {
   background: rgba(225, 29, 72, 0.1);
@@ -201,24 +176,10 @@ tr.editing-row {
   justify-content: center;
 }
 
-.delete-btn:hover {
-  background: #E11D48;
-  color: #FFFFFF;
-  transform: scale(1.05);
-}
+.delete-btn:hover { background: #E11D48; color: #FFFFFF; transform: scale(1.05); }
 
-/* 🌟 Form Controls */
-.form-group {
-  margin-bottom: 1.25rem;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-main, #334155);
-  margin-bottom: 6px;
-}
+.form-group { margin-bottom: 1.25rem; }
+.form-group label { display: block; font-size: 0.9rem; font-weight: 700; color: var(--text-main, #334155); margin-bottom: 6px; }
 
 .form-group input, 
 .form-group select,
@@ -242,12 +203,8 @@ tr.editing-row {
   box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
 }
 
-.form-group input::placeholder {
-  color: var(--text-sub, #94A3B8) !important;
-  opacity: 0.8 !important;
-}
+.form-group input::placeholder { color: var(--text-sub, #94A3B8) !important; opacity: 0.8 !important; }
 
-/* 🌟 Side-by-Side Country Code + Phone Group */
 .phone-input-group {
   display: flex;
   gap: 8px;
@@ -268,17 +225,8 @@ tr.editing-row {
   outline: none;
 }
 
-.phone-number-input {
-  flex-grow: 1;
-  width: 100%;
-}
-
-.country-code-select option,
-.custom-select option {
-  color: var(--text-main, #0F172A) !important;
-  background-color: var(--card-bg, #FFFFFF) !important;
-  padding: 10px;
-}
+.phone-number-input { flex-grow: 1; width: 100%; }
+.country-code-select option, .custom-select option { color: var(--text-main, #0F172A) !important; background-color: var(--card-bg, #FFFFFF) !important; padding: 10px; }
 
 .submit-btn {
   width: 100%;
@@ -295,10 +243,7 @@ tr.editing-row {
   margin-top: 10px;
 }
 
-.submit-btn:hover {
-  background: #BE123C;
-  transform: translateY(-2px);
-}
+.submit-btn:hover { background: #BE123C; transform: translateY(-2px); }
 
 .cancel-btn {
   width: 100%;
@@ -314,86 +259,30 @@ tr.editing-row {
   margin-top: 8px;
 }
 
-.cancel-btn:hover {
-  background: #64748B;
-  color: #FFFFFF;
+.cancel-btn:hover { background: #64748B; color: #FFFFFF; }
+
+@media (max-width: 1024px) {
+  .employees-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
 }
 
-/* ==========================================
-   📱 MOBILE RESPONSIVE FIX
-   ========================================== */
 @media (max-width: 768px) {
-  .employees-container {
-    width: 100% !important;
-    padding: 10px !important;
-    overflow-x: hidden !important;
-  }
+  .employees-container { width: 100% !important; padding: 12px !important; box-sizing: border-box !important; }
+  .employee-table-card, .add-employee-card { width: 100% !important; padding: 1.25rem !important; box-sizing: border-box !important; }
+  .phone-input-group { flex-direction: row !important; }
+}
 
-  .employee-table-card, 
-  .add-employee-card {
-    width: 100% !important;
-    padding: 1rem !important;
-    box-sizing: border-box !important;
-    overflow-x: hidden !important;
-  }
+/* 🚀 MAIN CSS FIX: Delay loader by 300ms so fast API calls never show it */
+.smooth-loader {
+  opacity: 0;
+  animation: showLoader 0.5s ease-in forwards;
+  animation-delay: 0.3s;
+}
 
-  .table-responsive {
-    width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-  table, thead, tbody, th, td, tr {
-    display: block;
-    width: 100% !important;
-  }
-
-  thead tr {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-
-  tr {
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color, #E2E8F0);
-    border-radius: 12px;
-    padding: 10px;
-    background: var(--bg-primary, #F8FAFC);
-  }
-
-  td {
-    border: none !important;
-    position: relative;
-    padding: 8px 0 8px 35% !important;
-    text-align: right !important;
-    font-size: 0.9rem;
-  }
-
-  td:nth-of-type(1):before { content: "Name: "; }
-  td:nth-of-type(2):before { content: "Role: "; }
-  td:nth-of-type(3):before { content: "Contact: "; }
-  td:nth-of-type(4):before { content: "Status: "; }
-  td:nth-of-type(5):before { content: "Action: "; }
-
-  td:before {
-    position: absolute;
-    left: 0;
-    width: 30%;
-    white-space: nowrap;
-    font-weight: 700;
-    color: var(--text-sub, #64748B);
-    text-align: left;
-  }
-
-  .staff-profile {
-    justify-content: flex-end;
-  }
-
-  .action-buttons {
-    justify-content: flex-end;
-  }
-
-  .phone-input-group {
-    flex-direction: row;
+@keyframes showLoader {
+  to {
+    opacity: 1;
   }
 }
